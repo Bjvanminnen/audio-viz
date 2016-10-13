@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-
-import graph from './audioGraph';
+import { getFile } from './audioGraph';
 
 const styles = {
   canvas: {
@@ -9,15 +8,35 @@ const styles = {
 };
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.play = this.play.bind(this);
+    this.mute = this.mute.bind(this);
+    
+    this.state = {};
+  }
+
+  componentDidMount() {
+    getFile(process.env.PUBLIC_URL + 'firstfires.mp3')
+    .then(file => this.setState({file}));
+  }
+
   play() {
-    graph.playFile(process.env.PUBLIC_URL + 'firstfires.mp3');
+    this.state.file.play();
+  }
+
+  mute() {
+    this.state.file.mute();
   }
 
   render() {
     return (
       <div>
-        <button onClick={this.play}>Play</button>
+        <button disabled={!this.state.file} onClick={this.play}>Play</button>
+        <button onClick={this.mute}>Mute</button>
         <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
+        <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
       </div>
     );
   }

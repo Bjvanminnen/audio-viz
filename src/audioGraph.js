@@ -1,21 +1,6 @@
-var Grapher = require('./grapher');
-
-var context;
-function getContext () {
-  if (context) {
-    return context;
-  }
-
-  if (typeof AudioContext !== "undefined") {
-    context = new AudioContext();
-  } else if (typeof window.webkitAudioContext !== "undefined") {
-    context = new window.webkitAudioContext();
-  } else {
-    throw new Error('AudioContext not supported. :(');
-  }
-
-  return context;
-}
+import Grapher from './grapher';
+import { getContext, loadBuffer } from './webAudio';
+import { createFunctionalAudioGraph } from './createFunctionalAudioGraph';
 
 var graphers = [];
 function getGrapher(id) {
@@ -30,83 +15,67 @@ function getGrapher(id) {
 }
 
 function createGraph() {
-  var graph = {};
-  var ctx = graph.context = getContext();
-  var nodes = graph.nodes = {};
   var startTime;
 
-  nodes.source = ctx.createBufferSource();
-  nodes.gain = ctx.createGain();
-  nodes.analyzer = ctx.createAnalyser();
-  nodes.processor = ctx.createScriptProcessor(4096);
+  const source = createFunctionalAudioGraph();
+  const gain = source._targets[0];
+  const processor = gain._targets[0];
+  const analyzer = processor._targets[0];
 
-  graph.start = function () {
-    nodes.source.connect(nodes.gain);
-    nodes.gain.connect(nodes.processor);
-    nodes.processor.connect(nodes.analyzer);
-    nodes.processor.connect(ctx.destination);
-    startTime = ctx.currentTime;
-    nodes.source.start();
+  extendProcessor(processor, {});
 
-    graph.nodes.source.onended = function () {
-      setTimeout(function () {
-        nodes.processor.onended();
-      }, 1000);
+  return {
+    start(buffer) {
+      startTime = getContext().currentTime;
+      source.buffer = buffer;
+      source.start();
+
+      source.onended = () => {
+        setTimeout(() => processor.onended(), 1000);
+      };
+    },
+    mute() {
+      gain.gain.value = 0;
+    },
+    runTime() {
+      return getContext().currentTime - startTime;
+    }
+  };
+};
+
+function createGraph2() {
+  // BUFFER -> DESTINATION
+  const ctx = getContext();
+  const source = ctx.createBufferSource();
+  source.connect(ctx.destination);
+
+  return {
+    play(audioBuffer) {
+      source.buffer = audioBuffer;
+      source.start();
+    }
+  };
+}
+
+export function getFile(file) {
+  const options = {};
+  let graph = createGraph();
+
+  return loadBuffer(file).then(buffer => {
+    return {
+      play() {
+        graph.start(buffer);
+      },
+      mute() {
+        graph.mute();
+      }
     };
-  }
-
-  graph.runTime = function () {
-    return ctx.currentTime - startTime;
-  }
-
-  return graph;
-};
-
-function loadBuffer(url, audioContext, callback) {
-  var request = new XMLHttpRequest();
-  request.open("GET", url, true);
-  request.responseType = "arraybuffer";
-
-  // Our asynchronous callback
-  request.onload = function() {
-    var audioData = request.response;
-    audioContext.decodeAudioData(audioData, function (buffer) {
-      console.log('decoded: ' + buffer.length);
-      callback(buffer);
-    });
-  };
-
-  request.onerror = function (err) {
-    console.log(err);
-  };
-
-  request.send();
-};
-
-function playFile (file, options) {
-  options = options || {};
-  var graph = createGraph();
-  extendGain(graph.nodes.gain, options);
-  extendProcessor(graph.nodes.processor, options);
-
-  loadBuffer(file, graph.context, function (buffer) {
-    extendSource(graph.nodes.source, buffer, options);
-
-    graph.start();
   });
-};
+}
 
 /**
  * EXTENDERS
  */
-
-function extendSource(node, buffer, options) {
-  node.buffer = buffer;
-}
-
-function extendGain(node, options) {
-  node.gain.value = options.gain || 1;
-}
 
 function extendProcessor(node, options) {
   node.onaudioprocess = function (audioEvent) {
@@ -134,5 +103,3 @@ function extendProcessor(node, options) {
     }
   }
 }
-
-module.exports.playFile = playFile;
