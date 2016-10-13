@@ -13,12 +13,12 @@ class App extends Component {
 
     this.play = this.play.bind(this);
     this.mute = this.mute.bind(this);
-    
+
     this.state = {};
   }
 
   componentDidMount() {
-    getFile(process.env.PUBLIC_URL + 'firstfires.mp3')
+    getFile(process.env.PUBLIC_URL + '/sounds/bloop.wav')
     .then(file => this.setState({file}));
   }
 

@@ -19,22 +19,25 @@ function connect(source, ...targets) {
   return source;
 }
 
-function Destination() {
+export function Destination() {
   return getContext().destination;
 }
 
-function Analyzer() {
+export function Analyzer() {
   return getContext().createAnalyser();
 }
 
-function Processor(options, ...targets) {
+export function Processor(options, ...targets) {
   [options, targets] = resolveInputs(options, ...targets);
 
   const node = getContext().createScriptProcessor(4096);
+  if (options.onAudioProcess) {
+    node.onaudioprocess = options.onAudioProcess;
+  }
   return connect(node, ...targets);
 }
 
-function Gain(options, ...targets) {
+export function Gain(options, ...targets) {
   [options, targets] = resolveInputs(options, ...targets);
 
   const node = getContext().createGain();
@@ -42,20 +45,9 @@ function Gain(options, ...targets) {
   return connect(node, ...targets);
 }
 
-function Source(options, ...targets) {
+export function Source(options, ...targets) {
   [options, targets] = resolveInputs(options, ...targets);
 
   const node = getContext().createBufferSource();
   return connect(node, ...targets);
-}
-
-export function createFunctionalAudioGraph() {
-  return Source(
-    Gain({value: 1},
-      Processor(
-        Analyzer(),
-        Destination()
-      )
-    )
-  );
 }
