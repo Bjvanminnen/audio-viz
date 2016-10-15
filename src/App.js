@@ -31,6 +31,7 @@ class App extends Component {
   }
 
   render() {
+    console.log('render');
     return (
       <div>
         <button disabled={!this.state.file} onClick={this.play}>Play</button>

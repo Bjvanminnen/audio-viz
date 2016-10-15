@@ -5,6 +5,9 @@ var COLORS = ['red', 'blue', 'green']
 
 
 var Grapher = function (canvas) {
+  if (!canvas) {
+    throw new Error('grapher requires canvas');
+  }
   this.canvas_ = canvas;
   this.ctx_ = canvas.getContext('2d');
   this.width_ = canvas.getAttribute('width');
