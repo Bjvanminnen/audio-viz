@@ -19,6 +19,17 @@ function connect(source, ...targets) {
   return source;
 }
 
+export function disconnectGraph(node) {
+  if (!node._targets) {
+    return;
+  }
+  node._targets.forEach(targetNode => {
+    node.disconnect(targetNode);
+    disconnectGraph(targetNode);
+  });
+  node._targets = [];
+}
+
 export function Destination() {
   return getContext().destination;
 }

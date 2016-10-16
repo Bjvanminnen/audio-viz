@@ -5,11 +5,13 @@ import {
   Gain,
   Processor,
   Destination,
-  Oscillator
+  Oscillator,
+  disconnectGraph
 } from './functionalAudioNodes';
 
 const createGrapherProcessor = graphers => {
  return function onAudioProcess(audioEvent) {
+   console.log('oap');
     const numChannels = 2;
     for (let channel = 0; channel < numChannels; channel++) {
       const input = audioEvent.inputBuffer.getChannelData(channel);
@@ -42,24 +44,32 @@ function createGraph(SourceNode) {
     new Grapher(document.getElementById('c1'))
   ];
 
-  const onAudioProcess = createGrapherProcessor(graphers);
-
-  const source = SourceNode(
-    Processor({onAudioProcess: onAudioProcess},
-      Gain({value: 1},
-        Destination(),
-      )
-    )
-  );
-
+  let source;
   return {
     start(buffer) {
+      const onAudioProcess = createGrapherProcessor(graphers);
+
+      source = SourceNode(
+        Processor({onAudioProcess: onAudioProcess},
+          Gain({value: 1},
+            Destination(),
+          )
+        )
+      );
+      source.onended = () => {
+        disconnectGraph(source);
+        console.log('disconnected');
+      };
+
       if (buffer) {
         source.buffer = buffer;
       }
       source.start();
     },
     mute() {
+      if (!source || source._targets.length === 0) {
+        return;
+      }
       const gainNode = source._targets[0]._targets[0];
       gainNode.gain.value = 0;
     }
