@@ -1,10 +1,9 @@
 import $ from 'jquery';
 
-var resetCount = 0;
-var COLORS = ['red', 'blue', 'green']
+let resetCount = 0;
+const COLORS = ['red', 'blue', 'green']
 
-
-var Grapher = function (canvas) {
+export default function Grapher (canvas, options={}) {
   if (!canvas) {
     throw new Error('grapher requires canvas');
   }
@@ -16,19 +15,16 @@ var Grapher = function (canvas) {
 
   this.x_ = 0;
 
-  this.options_ = {};
+  this.options_ = options;
 
-  var self = this;
-  $(document).click(function () {
-    self.onClick();
+  $(document).click(() => {
+    this.drawLine();
   });
 };
-module.exports = Grapher;
 
 Grapher.prototype.graph = function (data) {
   // console.log('graph ' + this.x_);
-  var options = this.options_ || {};
-  options.style = options.style || COLORS[resetCount % COLORS.length];
+  const style = this.options_.style || COLORS[resetCount % COLORS.length];
 
   var ctx = this.ctx_;
   var origin = this.origin_;
@@ -39,7 +35,7 @@ Grapher.prototype.graph = function (data) {
 
   // drawLine(ctx, this.x_);
 
-  ctx.strokeStyle = options.style;
+  ctx.strokeStyle = style;
 
   ctx.clearRect(this.x_, 0, data.length * 5, this.height_);
 
@@ -78,6 +74,6 @@ Grapher.prototype.reset = function (options) {
   this.options_ = options;
 };
 
-Grapher.prototype.onClick = function () {
+Grapher.prototype.drawLine = function () {
   drawLine(this.ctx_, this.x_, this.height_);
-};
+}

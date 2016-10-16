@@ -51,3 +51,12 @@ export function Source(options, ...targets) {
   const node = getContext().createBufferSource();
   return connect(node, ...targets);
 }
+
+export function Oscillator(options, ...targets) {
+  [options, targets] = resolveInputs(options, ...targets);
+
+  const node = getContext().createOscillator();
+  node.frequency.value = 3000;
+  node.frequency.type = 'sine';
+  return connect(node, ...targets);
+}

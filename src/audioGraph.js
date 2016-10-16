@@ -1,6 +1,6 @@
 import Grapher from './grapher';
 import { loadBuffer } from './webAudio';
-import { Source, Gain, Processor, Analyzer, Destination } from './createFunctionalAudioGraph';
+import { Source, Gain, Processor, Destination, Oscillator } from './createFunctionalAudioGraph';
 
 const createGrapherProcessor = graphers => {
  return function onAudioProcess(audioEvent) {
@@ -24,7 +24,8 @@ const createGrapherProcessor = graphers => {
         sums[i] = sums[i] / blockSize / 2;
       }
 
-      graphers[channel].graph(sums);
+      graphers[channel].drawLine();
+      graphers[channel].graph(output);
     }
   };
 }
@@ -32,28 +33,27 @@ const createGrapherProcessor = graphers => {
 
 function createGraph() {
   const graphers = [
-    new Grapher(document.getElementById('c0')),
+    new Grapher(document.getElementById('c0'), { style: 'blue' }),
     new Grapher(document.getElementById('c1'))
   ];
 
   const onAudioProcess = createGrapherProcessor(graphers);
 
-  const source = Source(
-    Gain({value: 1},
-      Processor({onAudioProcess: onAudioProcess},
-        // Analyzer(),
-        Destination()
+  const source = Oscillator(
+    Processor({onAudioProcess: onAudioProcess},
+      Gain({value: 1},
+        Destination(),
       )
     )
   );
 
   return {
     start(buffer) {
-      source.buffer = buffer;
+      // source.buffer = buffer;
       source.start();
     },
     mute() {
-      const gainNode = source._targets[0];
+      const gainNode = source._targets[0]._targets[0];
       gainNode.gain.value = 0;
     }
   };
