@@ -1,6 +1,12 @@
 import Grapher from './grapher';
 import { loadBuffer } from './webAudio';
-import { Source, Gain, Processor, Destination, Oscillator } from './createFunctionalAudioGraph';
+import {
+  SourceBuffer,
+  Gain,
+  Processor,
+  Destination,
+  Oscillator
+} from './functionalAudioNodes';
 
 const createGrapherProcessor = graphers => {
  return function onAudioProcess(audioEvent) {
@@ -30,8 +36,7 @@ const createGrapherProcessor = graphers => {
   };
 }
 
-
-function createGraph() {
+function createGraph(SourceNode) {
   const graphers = [
     new Grapher(document.getElementById('c0'), { style: 'blue' }),
     new Grapher(document.getElementById('c1'))
@@ -39,7 +44,7 @@ function createGraph() {
 
   const onAudioProcess = createGrapherProcessor(graphers);
 
-  const source = Oscillator(
+  const source = SourceNode(
     Processor({onAudioProcess: onAudioProcess},
       Gain({value: 1},
         Destination(),
@@ -49,7 +54,9 @@ function createGraph() {
 
   return {
     start(buffer) {
-      // source.buffer = buffer;
+      if (buffer) {
+        source.buffer = buffer;
+      }
       source.start();
     },
     mute() {
@@ -59,10 +66,18 @@ function createGraph() {
   };
 };
 
-export function getFile(file) {
-  let graph = createGraph();
+export function createAudioGraph(file) {
+  let graph;
 
-  return loadBuffer(file).then(buffer => {
+  return new Promise((resolve, reject) => {
+    if (file) {
+      graph = createGraph(SourceBuffer);
+      resolve(loadBuffer(file));
+    } else {
+      graph = createGraph(Oscillator);
+      resolve();
+    }
+  }).then(buffer => {
     return {
       play() {
         graph.start(buffer);
@@ -71,5 +86,5 @@ export function getFile(file) {
         graph.mute();
       }
     };
-  });
+  }).catch(err => console.log(err));
 }

@@ -45,7 +45,7 @@ export function Gain(options, ...targets) {
   return connect(node, ...targets);
 }
 
-export function Source(options, ...targets) {
+export function SourceBuffer(options, ...targets) {
   [options, targets] = resolveInputs(options, ...targets);
 
   const node = getContext().createBufferSource();
