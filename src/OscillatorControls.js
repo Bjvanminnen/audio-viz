@@ -5,6 +5,12 @@ import ControlsBox from './ControlsBox';
 const styles = {
   button: {
     margin: 5
+  },
+  input: {
+    width: 10
+  },
+  volumeButton: {
+    display: 'inline-block'
   }
 };
 
@@ -18,11 +24,14 @@ class OscillatorControls extends Component {
 
     this.state = {
       playing: false,
-      stream: null
+      stream: null,
+      volume: 1
     };
 
     this.play = this.play.bind(this);
     this.mute = this.mute.bind(this);
+    this.volumeUp = this.volumeUp.bind(this);
+    this.volumeDown = this.volumeDown.bind(this);
   }
 
   componentDidMount() {
@@ -40,8 +49,18 @@ class OscillatorControls extends Component {
     this.state.stream.mute();
   }
 
+  volumeUp() {
+    const newVolume = this.state.stream.adjustVolume(0.25);    
+    this.setState({volume: newVolume});
+  }
+
+  volumeDown() {
+    const newVolume = this.state.stream.adjustVolume(-0.25);
+    this.setState({volume: newVolume});
+  }
+
   render() {
-    const { playing, stream } = this.state;
+    const { playing, stream, volume } = this.state;
     const { frequency } = this.props;
     return (
       <ControlsBox title={`Oscillator ${frequency}hz`}>
@@ -58,6 +77,12 @@ class OscillatorControls extends Component {
         >
           Mute
         </button>
+        <div>
+          Volume:
+          <button onClick={this.volumeUp}>/\</button>
+          <span>{volume}</span>
+          <button onClick={this.volumeDown}>\/</button>
+        </div>
       </ControlsBox>
     );
   }

@@ -5,7 +5,8 @@ const styles = {
     border: '1px solid black',
     display: 'inline-block',
     margin: 2,
-    padding: 2
+    padding: 2,
+    maxWidth: 200
   },
   close: {
     display: 'inline-block',
