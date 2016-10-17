@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { createAudioGraph } from './createAudioGraph';
+import OscillatorControls from './OscillatorControls';
 
 const styles = {
   canvas: {
@@ -15,7 +16,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    ['play', 'mute', 'toggleOscillator'].forEach(fn => {
+    ['play', 'mute'].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
 
@@ -41,28 +42,6 @@ class App extends Component {
     this.state.audioStream.play();
   }
 
-  toggleOscillator() {
-    if (!this.oscillator) {
-      createAudioGraph().then(stream => {
-        this.streams.push(stream);
-        stream.play();
-        this.oscillator = {
-          stream,
-          playing: true
-        };
-      });
-      return;
-    }
-
-    if (this.oscillator.playing) {
-      this.oscillator.stream.stop();
-      this.oscillator.playing = false;
-    } else {
-      this.oscillator.stream.play();
-      this.oscillator.playing = true;
-    }
-  }
-
   mute() {
     this.streams.forEach(stream => stream.adjustVolume(-0.25));
   }
@@ -70,6 +49,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <OscillatorControls />
         <button
           style={styles.topButton}
           disabled={!this.state.audioStream}
@@ -77,12 +57,14 @@ class App extends Component {
         >
           {this.file}
         </button>
-        <button
-          style={styles.topButton}
-          onClick={this.toggleOscillator}
-        >
-          Oscillator
-        </button>
+        {
+        // <button
+        //   style={styles.topButton}
+        //   onClick={this.toggleOscillator}
+        // >
+        //   Oscillator
+        // </button>
+        }
         <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
         <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
         <button onClick={this.mute}>Mute</button>
