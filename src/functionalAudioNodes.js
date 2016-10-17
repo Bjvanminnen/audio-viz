@@ -67,7 +67,7 @@ export function Oscillator(options, ...targets) {
   [options, targets] = resolveInputs(options, ...targets);
 
   const node = getContext().createOscillator();
-  node.frequency.value = 3000;
+  node.frequency.value = options.frequency || 3000;
   node.frequency.type = 'sine';
   return connect(node, ...targets);
 }
