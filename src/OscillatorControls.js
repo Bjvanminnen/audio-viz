@@ -1,13 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import createOscillatorStream from './createOscillatorStream';
+import ControlsBox from './ControlsBox';
 
 const styles = {
-  container: {
-    border: '1px solid black',
-    display: 'inline-block',
-    margin: 2,
-    padding: 2
-  },
   button: {
     margin: 5
   }
@@ -49,8 +44,7 @@ class OscillatorControls extends Component {
     const { playing, stream } = this.state;
     const { frequency } = this.props;
     return (
-      <div style={styles.container}>
-        <div>Oscillator {frequency}hz</div>
+      <ControlsBox title={`Oscillator ${frequency}hz`}>
         <button
           disabled={playing || !stream}
           onClick={this.play}
@@ -64,7 +58,7 @@ class OscillatorControls extends Component {
         >
           Mute
         </button>
-      </div>
+      </ControlsBox>
     );
   }
 };

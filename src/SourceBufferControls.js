@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import createSourceBufferStream from './createSourceBufferStream';
+import ControlsBox from './ControlsBox';
 
 const styles = {
-  container: {
-    border: '1px solid black',
-    display: 'inline-block',
-    margin: 2,
-    padding: 2
-  },
   button: {
     margin: 5
   }
@@ -44,8 +39,7 @@ class SourceBufferControls extends Component {
     const { playing, stream } = this.state;
     const { file } = this.props;
     return (
-      <div style={styles.container}>
-        <div>{file}</div>
+      <ControlsBox title={file}>
         <button
           disabled={playing || !stream}
           onClick={this.play}
@@ -59,7 +53,7 @@ class SourceBufferControls extends Component {
         >
           Mute
         </button>
-      </div>
+      </ControlsBox>
     );
   }
 };
