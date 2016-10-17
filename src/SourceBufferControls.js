@@ -13,7 +13,7 @@ const styles = {
   }
 };
 
-class OscillatorControls extends Component {
+class SourceBufferControls extends Component {
   constructor(props) {
     super(props);
 
@@ -25,7 +25,8 @@ class OscillatorControls extends Component {
     this.play = this.play.bind(this);
     this.mute = this.mute.bind(this);
 
-    createAudioGraph().then(stream => {
+    const filePath = process.env.PUBLIC_URL + '/sounds/' + props.file;
+    createAudioGraph(filePath).then(stream => {
       this.setState({stream});
     });
   }
@@ -41,9 +42,10 @@ class OscillatorControls extends Component {
 
   render() {
     const { playing, stream } = this.state;
+    const { file } = this.props;
     return (
       <div style={styles.container}>
-        <div>Oscillator</div>
+        <div>{file}</div>
         <button
           disabled={playing || !stream}
           onClick={this.play}
@@ -61,4 +63,4 @@ class OscillatorControls extends Component {
     );
   }
 };
-export default OscillatorControls;
+export default SourceBufferControls;
