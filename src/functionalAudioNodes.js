@@ -60,6 +60,10 @@ export function SourceBuffer(options, ...targets) {
   [options, targets] = resolveInputs(options, ...targets);
 
   const node = getContext().createBufferSource();
+  const { buffer } = options;
+  if (buffer) {
+    node.buffer = buffer;
+  }
   return connect(node, ...targets);
 }
 

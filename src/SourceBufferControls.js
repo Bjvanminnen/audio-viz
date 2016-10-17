@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { createAudioGraph } from './createAudioGraph';
+import createSourceBufferStream from './createSourceBufferStream';
 
 const styles = {
   container: {
@@ -25,19 +25,19 @@ class SourceBufferControls extends Component {
     this.play = this.play.bind(this);
     this.mute = this.mute.bind(this);
 
-    const filePath = process.env.PUBLIC_URL + '/sounds/' + props.file;
-    createAudioGraph(filePath).then(stream => {
+    const filepath = process.env.PUBLIC_URL + '/sounds/' + props.file;
+    createSourceBufferStream(filepath).then(stream => {
       this.setState({stream});
     });
   }
 
   play() {
-    this.state.stream.play();
+    this.state.stream.start();
     this.setState({playing: true});
   }
 
   mute() {
-    this.state.stream.adjustVolume(-1);
+    this.state.stream.mute();
   }
 
   render() {

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { createAudioGraph } from './createAudioGraph';
 import OscillatorControls from './OscillatorControls';
 import SourceBufferControls from './SourceBufferControls';
 
@@ -14,7 +13,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <OscillatorControls />
+        <OscillatorControls frequency={1000} />
         <SourceBufferControls file='bloop.wav' />
         <SourceBufferControls file='heartbeats.mp3' />
         <SourceBufferControls file='firstfires.mp3' />

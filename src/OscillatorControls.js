@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { createAudioGraph } from './createAudioGraph';
+import React, { Component, PropTypes } from 'react';
+import createOscillatorStream from './createOscillatorStream';
 
 const styles = {
   container: {
@@ -14,6 +14,10 @@ const styles = {
 };
 
 class OscillatorControls extends Component {
+  static propTypes = {
+    frequency: PropTypes.number.isRequired
+  };
+
   constructor(props) {
     super(props);
 
@@ -24,26 +28,29 @@ class OscillatorControls extends Component {
 
     this.play = this.play.bind(this);
     this.mute = this.mute.bind(this);
+  }
 
-    createAudioGraph().then(stream => {
-      this.setState({stream});
+  componentDidMount() {
+    this.setState({
+      stream: createOscillatorStream(this.props.frequency)
     });
   }
 
   play() {
-    this.state.stream.play();
+    this.state.stream.start();
     this.setState({playing: true});
   }
 
   mute() {
-    this.state.stream.adjustVolume(-1);
+    this.state.stream.mute();
   }
 
   render() {
     const { playing, stream } = this.state;
+    const { frequency } = this.props;
     return (
       <div style={styles.container}>
-        <div>Oscillator</div>
+        <div>Oscillator {frequency}hz</div>
         <button
           disabled={playing || !stream}
           onClick={this.play}
