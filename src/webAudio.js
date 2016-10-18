@@ -31,7 +31,7 @@ export function loadBuffer(url) {
     request.onload = () => {
       getContext().decodeAudioData(request.response)
       .then(buffer => {
-        console.log('decoded: ' + buffer.length);        
+        console.log('decoded: ' + buffer.length);
         resolve(buffer);
       });
     };
@@ -44,3 +44,18 @@ export function loadBuffer(url) {
     request.send();
   });
 };
+
+export function playData(data) {
+  const audioCtx = getContext();
+  const buffer = audioCtx.createBuffer(1, data.length, audioCtx.sampleRate);
+  let channel = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    channel[i] = data[i];
+  }
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioCtx.destination);
+  source.start();
+  return source;
+}
