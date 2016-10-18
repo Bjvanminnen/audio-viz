@@ -5,17 +5,6 @@ const styles = {
   canvas: {
     border: '1px solid black',
     backgroundColor: 'black'
-  },
-  button: {
-    // display: 'inline-block',
-    display: 'none',
-    position: 'absolute',
-    top: 0
-  },
-  // hack bc i'm struggling to get buttons to look right otherwise
-  canvasContainer: {
-    display: 'inline-block',
-    marginLeft: 24
   }
 };
 
@@ -38,7 +27,11 @@ class BufferCanvas extends Component {
     this.drawCanvas();
   }
 
-  componentDidUpdate() {
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  componentWillReceiveProps() {
     this.drawCanvas();
   }
 

@@ -82,17 +82,21 @@ class BufferCanvasController extends Component {
 
     this.setState({source});
 
+    const startDate = new Date();
+    let numUpdates = 0;
     const interval = 1000 / (audioContext.sampleRate / this.props.width);
-    console.log('interval: ' + interval);
-    // TODO - log FPS
-    // TODO - understand why we get lots of blank canvases
     // TODO - multiple colors?
     this.offsetUpdater = window.setInterval(() => {
       const now = audioContext.currentTime;
       const amountPlayed = (now - startTime) * audioContext.sampleRate;
       this.setState({
-        offset: originalOffset + amountPlayed
+        offset: originalOffset + Math.round(amountPlayed)
       });
+
+      numUpdates++;
+      const dateDelta = (new Date() - startDate) / 1000;
+      const fps = numUpdates / dateDelta;
+      this.refs.fps.innerHTML = fps;
     }, interval);
   }
 
@@ -138,6 +142,7 @@ class BufferCanvasController extends Component {
         >
           Stop
         </button>
+        <div ref="fps">0</div>
       </div>
     );
   }
