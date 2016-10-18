@@ -76,12 +76,30 @@ class BufferCanvasController extends Component {
 
   play() {
     const source = playData(this.props.data.subarray(this.state.offset));
+    const audioContext = source.context;
+    const startTime = audioContext.currentTime;
+    const originalOffset = this.state.offset;
+
     this.setState({source});
+
+    const interval = 1000 / (audioContext.sampleRate / this.props.width);
+    console.log('interval: ' + interval);
+    // TODO - log FPS
+    // TODO - understand why we get lots of blank canvases
+    // TODO - multiple colors?
+    this.offsetUpdater = window.setInterval(() => {
+      const now = audioContext.currentTime;
+      const amountPlayed = (now - startTime) * audioContext.sampleRate;
+      this.setState({
+        offset: originalOffset + amountPlayed
+      });
+    }, interval);
   }
 
   stop() {
     this.state.source.stop();
     this.setState({source: null});
+    window.clearInterval(this.offsetUpdater);
   }
 
   render() {

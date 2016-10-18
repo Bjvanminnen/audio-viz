@@ -56,6 +56,7 @@ export function playData(data) {
   const source = audioCtx.createBufferSource();
   source.buffer = buffer;
   source.connect(audioCtx.destination);
-  source.start();
+  source.start();  
+
   return source;
 }

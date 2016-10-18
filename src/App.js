@@ -32,7 +32,7 @@ class App extends Component {
         // <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
         // <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
         }
-        <SourceBufferCanvas width={1400} height={200} file='heartbeats.mp3'/>
+        <SourceBufferCanvas width={1800} height={600} file='firstfires.mp3'/>
 
       </div>
     );
