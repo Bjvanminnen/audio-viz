@@ -19,7 +19,8 @@ class BufferCanvasController extends Component {
   propTypes: {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    data: PropTypes.array.isRequired
+    data: PropTypes.array.isRequired,
+    fullScreenMode: PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -62,6 +63,10 @@ class BufferCanvasController extends Component {
     if (event.keyCode === 39) {
       this.moveOffset(event.ctrlKey ? 10000 : 10);
     }
+    // space
+    if (event.keyCode === 32) {
+      this.play();
+    }
   }
 
   onBlurOffset(event) {
@@ -75,6 +80,9 @@ class BufferCanvasController extends Component {
   }
 
   play() {
+    if (this.state.source) {
+      return;
+    }
     const source = playData(this.props.data.subarray(this.state.offset));
     const audioContext = source.context;
     const startTime = audioContext.currentTime;
@@ -84,8 +92,7 @@ class BufferCanvasController extends Component {
 
     const startDate = new Date();
     let numUpdates = 0;
-    const interval = 1000 / (audioContext.sampleRate / this.props.width);
-    // TODO - multiple colors?
+    const interval = 1000 / (audioContext.sampleRate / this.props.width);    
     this.offsetUpdater = window.setInterval(() => {
       const now = audioContext.currentTime;
       const amountPlayed = (now - startTime) * audioContext.sampleRate;
@@ -107,7 +114,7 @@ class BufferCanvasController extends Component {
   }
 
   render() {
-    const { width, height, data } = this.props;
+    const { width, height, data, fullScreenMode } = this.props;
     const { offset, source } = this.state;
 
     return (
@@ -117,32 +124,36 @@ class BufferCanvasController extends Component {
           width={width}
           offset={offset}
           data={data}/>
-        <div>
-          <span>Offset: </span>
-          <input
-            ref="offset"
-            style={styles.input}
-            defaultValue={offset}
-            onFocus={this.onFocusOffset}
-            onBlur={this.onBlurOffset}
-          />
-          <span> of {data.length.toLocaleString()}</span>
-        </div>
-        <button
-          style={styles.button}
-          disabled={!!source}
-          onClick={this.play}
-        >
-          Play
-        </button>
-        <button
-          style={styles.button}
-          disabled={!source}
-          onClick={this.stop}
-        >
-          Stop
-        </button>
-        <div ref="fps">0</div>
+        {!fullScreenMode &&
+          <div>
+            <div>
+              <span>Offset: </span>
+              <input
+                ref="offset"
+                style={styles.input}
+                defaultValue={offset}
+                onFocus={this.onFocusOffset}
+                onBlur={this.onBlurOffset}
+              />
+              <span> of {data.length.toLocaleString()}</span>
+            </div>
+            <button
+              style={styles.button}
+              disabled={!!source}
+              onClick={this.play}
+            >
+              Play
+            </button>
+            <button
+              style={styles.button}
+              disabled={!source}
+              onClick={this.stop}
+            >
+              Stop
+            </button>
+            <div ref="fps">0</div>
+          </div>
+        }
       </div>
     );
   }

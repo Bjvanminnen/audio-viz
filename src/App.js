@@ -18,8 +18,14 @@ const notes = {
   E4: 329.63
 };
 
+function isFullScreen() {
+  return window.innerHeight === screen.height;
+}
+
 class App extends Component {
   render() {
+    const width = isFullScreen() ? screen.width - 8 : 1800;
+    const height = isFullScreen() ? screen.height - 6 : 600;
     return (
       <div>
         {
@@ -32,7 +38,12 @@ class App extends Component {
         // <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
         // <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
         }
-        <SourceBufferCanvas width={1800} height={600} file='firstfires.mp3'/>
+        <SourceBufferCanvas
+          width={width}
+          height={height}
+          file='heartbeats.mp3'
+          fullScreenMode={isFullScreen()}
+        />
 
       </div>
     );

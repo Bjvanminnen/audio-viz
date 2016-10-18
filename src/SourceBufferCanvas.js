@@ -10,7 +10,8 @@ class SourceBufferCanvas extends Component {
   propTypes: {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    file: PropTypes.string.isRequired
+    file: PropTypes.string.isRequired,
+    fullScreenMode: PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -33,13 +34,14 @@ class SourceBufferCanvas extends Component {
     if (!this.state.data) {
       return <div>Loading...</div>
     }
-    const { width, height } = this.props;
+    const { width, height, fullScreenMode } = this.props;
 
     return (
       <div>
         <BufferCanvasController
           width={width}
           height={height}
+          fullScreenMode={fullScreenMode}
           data={this.state.data}
         />
       </div>

@@ -13,12 +13,23 @@ class BufferCanvas extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     offset: PropTypes.number.isRequired,
-    data: PropTypes.array.isRequired
+    data: PropTypes.array.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.context = null;
+
+    this.colors = [
+      'blue',
+      'orange',
+      'yellow',
+      // 'green',
+      // 'blue',
+      // 'indigo',
+      // 'violet'
+    ];
+    this.colorIndex = 0;
   }
 
   componentDidMount() {
@@ -41,8 +52,11 @@ class BufferCanvas extends Component {
 
     const origin = Math.round(height / 2);
 
+    this.colorIndex = [this.colorIndex + 1] % this.colors.length;
+    context.strokeStyle = this.colors[this.colorIndex];
+    context.lineWidth = 2;
+
     context.clearRect(0, 0, width, height);
-    context.strokeStyle = 'yellow';
     context.beginPath();
     context.moveTo(0, origin);
     for (let x = 0; x < width; x++) {
