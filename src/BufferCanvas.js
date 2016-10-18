@@ -7,7 +7,8 @@ const styles = {
     backgroundColor: 'black'
   },
   button: {
-    display: 'inline-block',
+    // display: 'inline-block',
+    display: 'none',
     position: 'absolute',
     top: 0
   },
@@ -50,27 +51,27 @@ class BufferCanvas extends Component {
     return false;
   }
 
-  left() {
-    this.offset -= 10;
+  left(delta = 10) {
+    this.offset -= delta;
     this.drawCanvas();
   }
 
-  right() {
-    this.offset += 10;
+  right(delta = 10) {
+    this.offset += delta;
     this.drawCanvas();
   }
 
   onKeyDown(event) {
     if (event.keyCode === 37) {
-      this.left();
+      this.left(event.ctrlKey ? 10000 : undefined);
     }
     if (event.keyCode === 39) {
-      this.right();
+      this.right(event.ctrlKey ? 10000 : undefined);
     }
   }
 
   drawCanvas() {
-    ReactDOM.findDOMNode(this.refs.offset).innerHTML = this.offset;
+    ReactDOM.findDOMNode(this.refs.offset).innerHTML = this.offset.toLocaleString();
     const { context, windowSize, offset } = this;
     const { width, height, data } = this.props;
 
@@ -89,7 +90,7 @@ class BufferCanvas extends Component {
   }
 
   render() {
-    const { width, height } = this.props;
+    const { width, height, data } = this.props;
     const buttonStyle = {
       ...styles.button,
       height
@@ -124,7 +125,11 @@ class BufferCanvas extends Component {
         >
           {">"}
         </button>
-        <div>Offset: <span ref="offset">0</span></div>
+        <div>
+          <span>Offset: </span>
+          <span ref="offset">0</span>
+          <span> of {data.length.toLocaleString()}</span>
+        </div>
       </div>
     );
   }
