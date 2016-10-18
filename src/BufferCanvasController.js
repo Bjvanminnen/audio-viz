@@ -6,16 +6,8 @@ const styles = {
     border: '1px solid black',
     backgroundColor: 'black'
   },
-  button: {
-    // display: 'inline-block',
-    display: 'none',
-    position: 'absolute',
-    top: 0
-  },
-  // hack bc i'm struggling to get buttons to look right otherwise
-  canvasContainer: {
-    display: 'inline-block',
-    marginLeft: 24
+  input: {
+    width: 80
   }
 };
 
@@ -33,9 +25,10 @@ class BufferCanvasController extends Component {
       offset: 0
     };
 
-    this.right = this.right.bind(this);
-    this.left = this.left.bind(this);
+    this.moveOffset = this.moveOffset.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.onFocusOffset = this.onFocusOffset.bind(this);
+    this.onBlurOffset = this.onBlurOffset.bind(this);
   }
 
   componentDidMount() {
@@ -43,13 +36,13 @@ class BufferCanvasController extends Component {
     document.addEventListener('keydown', this.onKeyDown.bind(this));
   }
 
-  left(delta = 10) {
-    this.setState({
-      offset: this.state.offset - delta
-    });
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.offset !== this.state.offset) {
+      this.refs.offset.value = this.state.offset.toLocaleString();
+    }
   }
 
-  right(delta = 10) {
+  moveOffset(delta) {
     this.setState({
       offset: this.state.offset + delta
     });
@@ -57,52 +50,43 @@ class BufferCanvasController extends Component {
 
   onKeyDown(event) {
     if (event.keyCode === 37) {
-      this.left(event.ctrlKey ? 10000 : undefined);
+      this.moveOffset(event.ctrlKey ? -10000 : -10);
     }
     if (event.keyCode === 39) {
-      this.right(event.ctrlKey ? 10000 : undefined);
+      this.moveOffset(event.ctrlKey ? 10000 : 10);
     }
+  }
+
+  onBlurOffset(event) {
+    this.refs.offset.setAttribute('type', undefined);
+    this.setState({offset: parseInt(event.target.value) });
+  }
+
+  onFocusOffset() {
+    this.refs.offset.value = this.state.offset;
+    this.refs.offset.setAttribute('type', 'number');
   }
 
   render() {
     const { width, height, data } = this.props;
     const { offset } = this.state;
-    const buttonStyle = {
-      ...styles.button,
-      height
-    };
-    const canvasContainerStyle = {
-      ...styles.canvasContainer,
-      width,
-      height
-    };
 
     return (
       <div>
-        <button
-          style={buttonStyle}
-          onClick={this.left}
-        >
-          {"<"}
-        </button>
-        <div
-          style={canvasContainerStyle}
-        >
-          <BufferCanvas
-            height={height}
-            width={width}
-            offset={offset}
-            data={data}/>
-        </div>
-        <button
-          style={buttonStyle}
-          onClick={this.right}
-        >
-          {">"}
-        </button>
+        <BufferCanvas
+          height={height}
+          width={width}
+          offset={offset}
+          data={data}/>
         <div>
           <span>Offset: </span>
-          <span ref="offset">{offset.toLocaleString()}</span>
+          <input
+            ref="offset"
+            style={styles.input}
+            defaultValue={offset}
+            onFocus={this.onFocusOffset}
+            onBlur={this.onBlurOffset}
+          />
           <span> of {data.length.toLocaleString()}</span>
         </div>
       </div>
