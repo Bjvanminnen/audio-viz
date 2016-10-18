@@ -31,8 +31,7 @@ export function loadBuffer(url) {
     request.onload = () => {
       getContext().decodeAudioData(request.response)
       .then(buffer => {
-        console.log('decoded: ' + buffer.length);
-        console.log(buffer.getChannelData(0));
+        console.log('decoded: ' + buffer.length);        
         resolve(buffer);
       });
     };

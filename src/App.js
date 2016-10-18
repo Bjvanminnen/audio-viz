@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import OscillatorControls from './OscillatorControls';
 import SourceBufferControls from './SourceBufferControls';
+import SourceBufferCanvas from './SourceBufferCanvas';
 
 const styles = {
   canvas: {
@@ -21,15 +22,18 @@ class App extends Component {
   render() {
     return (
       <div>
-        <OscillatorControls frequency={notes.A2} color='red'/>
-        <OscillatorControls frequency={notes.D4} color='yellow'/>
-        <SourceBufferControls file='bloop.wav' />
         {
+        // <OscillatorControls frequency={notes.A2} color='red'/>
+        // <OscillatorControls frequency={notes.D4} color='yellow'/>
+        // <SourceBufferControls file='bloop.wav' />
+
         // <SourceBufferControls file='heartbeats.mp3' />
         // <SourceBufferControls file='firstfires.mp3' />
+        // <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
+        // <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
         }
-        <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
-        <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
+        <SourceBufferCanvas width={1400} height={200} file='bloop.wav'/>
+
       </div>
     );
   }
