@@ -7,11 +7,11 @@ import {
 } from './functionalAudioNodes';
 import createGraphProcessor from './createGraphProcessor';
 
-export default function createOscillatorStream(frequency) {
+export default function createOscillatorStream(options = {}) {
   let root;
+  const { frequency, color } = options;
 
-  const onAudioProcess = createGraphProcessor({id: 'c0', color: 'red' },
-    {id: 'c1', color: 'yellow'});
+  const onAudioProcess = createGraphProcessor({id: 'c0', color });
 
   let nodes = {};
 
@@ -36,17 +36,17 @@ export default function createOscillatorStream(frequency) {
     stop() {
       root.stop();
     },
-    mute() {
-      if (!nodes.postgain) {
+    setVolume(volume) {
+      const gainNode = 'pregain';
+      if (!nodes[gainNode]) {
         return;
       }
-      nodes.postgain.gain.value = 0;
+      nodes[gainNode].gain.value = volume;
     },
     adjustVolume(delta) {
       if (!nodes.pregain) {
         return;
-      }
-      const gainNode = root._targets[0]._targets[0];
+      }      
       nodes.pregain.gain.value += delta;
       return nodes.pregain.gain.value;
     }

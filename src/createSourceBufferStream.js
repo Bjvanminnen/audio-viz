@@ -11,7 +11,8 @@ import createGraphProcessor from './createGraphProcessor';
 function createFromBuffer(buffer) {
   let root;
 
-  const onAudioProcess = createGraphProcessor({id: 'c0', color: 'red' },
+  const onAudioProcess = createGraphProcessor(
+    {id: 'c0', color: 'red' },
     {id: 'c1', color: 'yellow'});
 
   return {

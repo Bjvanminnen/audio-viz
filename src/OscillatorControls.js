@@ -36,7 +36,10 @@ class OscillatorControls extends Component {
 
   componentDidMount() {
     this.setState({
-      stream: createOscillatorStream(this.props.frequency)
+      stream: createOscillatorStream({
+        frequency: this.props.frequency,
+        color: this.props.color || 'red'
+      })
     });
   }
 
@@ -46,11 +49,13 @@ class OscillatorControls extends Component {
   }
 
   mute() {
-    this.state.stream.mute();
+    const newVolume = this.state.volume === 0 ? 1 : 0;
+    this.state.stream.setVolume(newVolume);
+    this.setState({volume: newVolume});
   }
 
   volumeUp() {
-    const newVolume = this.state.stream.adjustVolume(0.25);    
+    const newVolume = this.state.stream.adjustVolume(0.25);
     this.setState({volume: newVolume});
   }
 
@@ -75,7 +80,7 @@ class OscillatorControls extends Component {
           onClick={this.mute}
           style={styles.button}
         >
-          Mute
+          {volume === 0 ? 'Unmute' : 'Mute'}
         </button>
         <div>
           Volume:

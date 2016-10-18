@@ -5,30 +5,47 @@ export default function createGraphProcessor(...args) {
     new Grapher(document.getElementById(id), { style: color })
   ));
 
+  let n = 0;
+
   return function onAudioProcess(audioEvent) {
     const numChannels = 2;
     for (let channel = 0; channel < numChannels; channel++) {
       const input = audioEvent.inputBuffer.getChannelData(channel);
       let output = audioEvent.outputBuffer.getChannelData(channel);
 
-      let sums = [];
-      const blockSize = 512;
+      if (n === 0) {
+        console.log(input);
+      }
+      n++;
+
+      let nonZero = false;
+      // let sums = [];
+      // const blockSize = 512;
       for (let i = 0; i < input.length; i++) {
+        // output[i] = Math.abs(input[i]) > 0.95 ? input[i] : 0;
         output[i] = input[i];
-        const sumIndex = Math.floor(i / blockSize);
-        if (sums[sumIndex] === undefined) {
-          sums[sumIndex] = 0;
+        if (channel === 1) {
+          output[i] += 0.1;
         }
-        sums[sumIndex] -= Math.abs(output[i]);
+        if (output[i] !== 0) {
+          nonZero = true;
+        }
+        // const sumIndex = Math.floor(i / blockSize);
+        // if (sums[sumIndex] === undefined) {
+        //   sums[sumIndex] = 0;
+        // }
+        // sums[sumIndex] -= Math.abs(output[i]);
       }
 
-      for (let i = 0; i < sums.length; i++) {
-        sums[i] = sums[i] / blockSize / 2;
-      }
+      // for (let i = 0; i < sums.length; i++) {
+      //   sums[i] = sums[i] / blockSize / 2;
+      // }
 
       if (channel < graphers.length) {
         graphers[channel].drawLine();
-        graphers[channel].graph(output);
+        if (nonZero) {
+          graphers[channel].graph(output);
+        }
       }
     }
   };

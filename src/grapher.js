@@ -13,7 +13,7 @@ export default function Grapher (canvas, options={}) {
   this.height_ = canvas.getAttribute('height');
   this.origin_ = this.height_ / 2;
 
-  this.x_ = 0;
+  // this.x_ = 0;
 
   this.options_ = options;
 
@@ -23,44 +23,32 @@ export default function Grapher (canvas, options={}) {
 };
 
 Grapher.prototype.graph = function (data) {
-  // console.log('graph ' + this.x_);
   const style = this.options_.style || COLORS[resetCount % COLORS.length];
 
-  var ctx = this.ctx_;
-  var origin = this.origin_;
+  const ctx = this.ctx_;
+  const origin = this.origin_;
 
-  var yFromData = function (index) {
-    return origin - origin * data[index];
-  };
-
-  // drawLine(ctx, this.x_);
+  const yVals = data.map(val => origin - origin * val);
 
   ctx.strokeStyle = style;
 
-  ctx.clearRect(this.x_, 0, data.length * 5, this.height_);
+  ctx.clearRect(0, 0, this.width_, this.height_);
 
   ctx.beginPath();
-  ctx.moveTo(this.x_, yFromData(0));
+  ctx.moveTo(0, yVals[0]);
 
-  var step = 1;
+  const step = 3;
 
-  var x, y;
-  for (var i = 0; i < data.length; i += step) {
-    x = this.x_ + i / step;
-    y = yFromData(i);
-    ctx.lineTo(x, y);
+  const last = Math.min(yVals.length, (this.width_ + 1) * step);
+  for (let i = 0; i < last; i += step) {
+    const x = i / step;
+    ctx.lineTo(x, yVals[i]);
   }
   ctx.stroke();
-
-  this.x_ = x;
-
-  if (this.x_ > this.width_) {
-    this.x_ = 0;
-  }
 };
 
 function drawLine(ctx, x, height) {
-  ctx.strokeStyle = 'blue';
+  ctx.strokeStyle = 'yellow';
   ctx.beginPath();
   ctx.moveTo(x, 0);
   ctx.lineTo(x, height);
@@ -70,7 +58,7 @@ function drawLine(ctx, x, height) {
 Grapher.prototype.reset = function (options) {
   resetCount++;
   console.log('reset');
-  this.x_ = 0;
+  // this.x_ = 0;
   this.options_ = options;
 };
 
