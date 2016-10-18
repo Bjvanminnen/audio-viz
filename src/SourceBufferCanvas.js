@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { loadBuffer } from './webAudio';
-import BufferCanvas from './BufferCanvas';
+import BufferCanvasController from './BufferCanvasController';
 
+/**
+ * Wrapper around BufferCanvas that takes a file, loads it into a buffer, then
+ * renders a BufferCanvas
+ */
 class SourceBufferCanvas extends Component {
   propTypes: {
     width: PropTypes.number.isRequired,
@@ -30,10 +34,14 @@ class SourceBufferCanvas extends Component {
       return <div>Loading...</div>
     }
     const { width, height } = this.props;
-    
+
     return (
       <div>
-        <BufferCanvas width={width} height={height} data={this.state.data}/>
+        <BufferCanvasController
+          width={width}
+          height={height}
+          data={this.state.data}
+        />
       </div>
     );
   }

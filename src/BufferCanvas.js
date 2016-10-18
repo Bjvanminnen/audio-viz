@@ -23,57 +23,28 @@ class BufferCanvas extends Component {
   propTypes: {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
+    offset: PropTypes.number.isRequired,
     data: PropTypes.array.isRequired
   }
 
   constructor(props) {
     super(props);
-
-    this.offset = 0;
-    this.windowSize = 4096;
     this.context = null;
-
-    this.right = this.right.bind(this);
-    this.left = this.left.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
   }
 
   componentDidMount() {
     const canvas = ReactDOM.findDOMNode(this.refs.canvas);
     this.context = canvas.getContext('2d');
     this.drawCanvas();
-
-    document.addEventListener('keydown', this.onKeyDown.bind(this));
   }
 
-  shouldComponentUpdate() {
-    console.error('attempting to update');
-    return false;
-  }
-
-  left(delta = 10) {
-    this.offset -= delta;
+  componentDidUpdate() {
     this.drawCanvas();
-  }
-
-  right(delta = 10) {
-    this.offset += delta;
-    this.drawCanvas();
-  }
-
-  onKeyDown(event) {
-    if (event.keyCode === 37) {
-      this.left(event.ctrlKey ? 10000 : undefined);
-    }
-    if (event.keyCode === 39) {
-      this.right(event.ctrlKey ? 10000 : undefined);
-    }
   }
 
   drawCanvas() {
-    ReactDOM.findDOMNode(this.refs.offset).innerHTML = this.offset.toLocaleString();
-    const { context, windowSize, offset } = this;
-    const { width, height, data } = this.props;
+    const { context } = this;
+    const { width, height, offset, data } = this.props;
 
     const origin = Math.round(height / 2);
 
@@ -90,47 +61,14 @@ class BufferCanvas extends Component {
   }
 
   render() {
-    const { width, height, data } = this.props;
-    const buttonStyle = {
-      ...styles.button,
-      height
-    };
-    const canvasContainerStyle = {
-      ...styles.canvasContainer,
-      width,
-      height
-    };
+    const { width, height } = this.props;
 
-    // TODO - eventually separate canvas from stuff that can re-render
     return (
-      <div>
-        <button
-          style={buttonStyle}
-          onClick={this.left}
-        >
-          {"<"}
-        </button>
-        <div
-          style={canvasContainerStyle}
-        >
-          <canvas
-            height={height}
-            width={width}
-            style={styles.canvas}
-            ref='canvas'/>
-        </div>
-        <button
-          style={buttonStyle}
-          onClick={this.right}
-        >
-          {">"}
-        </button>
-        <div>
-          <span>Offset: </span>
-          <span ref="offset">0</span>
-          <span> of {data.length.toLocaleString()}</span>
-        </div>
-      </div>
+      <canvas
+        height={height}
+        width={width}
+        style={styles.canvas}
+        ref='canvas'/>
     );
   }
 };
