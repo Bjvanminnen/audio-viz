@@ -27,8 +27,12 @@ class BufferCanvasController extends Component {
     super(props);
 
     this.state = {
-      offset: 0,
-      source: null
+      offset: 1000000,
+      source: null,
+      cursor: {
+        offset: 0,
+        val: 0
+      }
     };
 
     this.moveOffset = this.moveOffset.bind(this);
@@ -37,6 +41,7 @@ class BufferCanvasController extends Component {
     this.onBlurOffset = this.onBlurOffset.bind(this);
     this.play = this.play.bind(this);
     this.stop = this.stop.bind(this);
+    this.logCursorChange = this.logCursorChange.bind(this);
   }
 
   componentDidMount() {
@@ -92,7 +97,7 @@ class BufferCanvasController extends Component {
 
     const startDate = new Date();
     let numUpdates = 0;
-    const interval = 1000 / (audioContext.sampleRate / this.props.width);    
+    const interval = 1000 / (audioContext.sampleRate / this.props.width);
     this.offsetUpdater = window.setInterval(() => {
       const now = audioContext.currentTime;
       const amountPlayed = (now - startTime) * audioContext.sampleRate;
@@ -113,6 +118,12 @@ class BufferCanvasController extends Component {
     window.clearInterval(this.offsetUpdater);
   }
 
+  logCursorChange(offset, val) {
+    this.setState({
+      cursor: { offset, val }
+    });
+  }
+
   render() {
     const { width, height, data, fullScreenMode } = this.props;
     const { offset, source } = this.state;
@@ -123,7 +134,9 @@ class BufferCanvasController extends Component {
           height={height}
           width={width}
           offset={offset}
-          data={data}/>
+          data={data}
+          logCursorChange={this.logCursorChange}
+        />
         {!fullScreenMode &&
           <div>
             <div>
@@ -152,6 +165,11 @@ class BufferCanvasController extends Component {
               Stop
             </button>
             <div ref="fps">0</div>
+            <div>
+              <span>{this.state.cursor.offset.toLocaleString()}</span>
+              <span> </span>
+              <span>{this.state.cursor.val}</span>
+            </div>
           </div>
         }
       </div>

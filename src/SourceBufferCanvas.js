@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { loadBuffer } from './webAudio';
 import BufferCanvasController from './BufferCanvasController';
+import { bufferMod1 } from './bufferModification';
 
 /**
  * Wrapper around BufferCanvas that takes a file, loads it into a buffer, then
@@ -26,7 +27,7 @@ class SourceBufferCanvas extends Component {
     const filepath = process.env.PUBLIC_URL + '/sounds/' + this.props.file;
     loadBuffer(filepath).then(buffer => {
       const data = buffer.getChannelData(0);
-      this.setState({data});
+      this.setState({data: bufferMod1(data)});
     });
   }
 

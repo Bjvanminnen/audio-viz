@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
+const STEP = 1;
+
 const styles = {
   canvas: {
     border: '1px solid black',
@@ -15,14 +17,14 @@ const colorTransition = () => {
 
   let delta = 3;
   return {
-    getColor() {
-      const nextColor = `rgb(${red}, ${green}, ${blue})`;
-
-      green += delta;
-      if (green > 255 || green < 0) {
-        delta *= -1;
+    getColor(updateColor) {
+      if (updateColor) {
+        green += delta;
+        if (green > 255 || green < 0) {
+          delta *= -1;
+        }
       }
-      return nextColor;
+      return `rgb(${red}, ${green}, ${blue})`;
     }
   };
 };
@@ -53,6 +55,7 @@ class BufferCanvas extends Component {
     height: PropTypes.number.isRequired,
     offset: PropTypes.number.isRequired,
     data: PropTypes.array.isRequired,
+    logIndex: PropTypes.func
   }
 
   constructor(props) {
@@ -60,6 +63,8 @@ class BufferCanvas extends Component {
     this.context = null;
 
     this.colorTransition = colorTransition();
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseOut = this.onMouseOut.bind(this);
   }
 
   componentDidMount() {
@@ -72,28 +77,75 @@ class BufferCanvas extends Component {
     return false;
   }
 
-  componentWillReceiveProps() {
-    this.drawCanvas();
+  componentWillReceiveProps(nextProps) {
+    if (this.props.offset !== nextProps.offset) {
+      this.drawCanvas();
+    }
   }
 
-  drawCanvas() {
+  drawCanvas(updateColor = true) {
     const { context } = this;
     const { width, height, offset, data } = this.props;
 
+    const leftOffset = offset - STEP * Math.round(width / 2);
+
     const origin = Math.round(height / 2);
 
-    context.strokeStyle = this.colorTransition.getColor();;
+    context.strokeStyle = this.colorTransition.getColor(updateColor);;
     context.lineWidth = 2;
 
     context.clearRect(0, 0, width, height);
     context.beginPath();
     context.moveTo(0, origin);
     for (let x = 0; x < width; x++) {
-      const val = data[offset + x];
+      const val = data[leftOffset + x * STEP];
       const y = origin - origin * val;
       context.lineTo(x, y);
     }
     context.stroke();
+
+    context.strokeStyle = 'white';
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(width / 2, 0);
+    context.lineTo(width / 2, height);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(0, height / 2);
+    context.lineTo(width, height / 2);
+    context.stroke();
+  }
+
+  onMouseMove(event) {
+    const { data, offset, width, height, logCursorChange } = this.props;
+    const leftOffset = offset - STEP * Math.round(width / 2);
+    const xClick = event.clientX - event.target.offsetLeft - 1;
+    const index = leftOffset + xClick;
+    const origin = Math.round(height / 2);
+
+    this.drawCanvas(false);
+
+    const { context } = this;
+    context.strokeStyle = 'green';
+    context.fillStyle = 'green';
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(xClick, 0);
+    context.lineTo(xClick, height);
+    context.stroke();
+    context.strokeStyle = 'white';
+    context.beginPath();
+    context.arc(xClick, origin - origin * data[index], 5, 0, 2 * Math.PI);
+    context.fill();
+    context.stroke();
+
+    if (logCursorChange) {
+      logCursorChange(index, data[index]);
+    }
+  }
+
+  onMouseOut(event) {
+    this.drawCanvas(false);
   }
 
   render() {
@@ -101,6 +153,8 @@ class BufferCanvas extends Component {
 
     return (
       <canvas
+        onMouseMove={this.onMouseMove}
+        onMouseOut={this.onMouseOut}
         height={height}
         width={width}
         style={styles.canvas}
