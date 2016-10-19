@@ -1,3 +1,5 @@
+/*eslint-disable no-useless-escape */
+
 import React, { Component, PropTypes } from 'react';
 import createOscillatorStream from './createOscillatorStream';
 import ControlsBox from './ControlsBox';

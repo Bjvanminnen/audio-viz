@@ -29,6 +29,7 @@ const colorTransition = () => {
   };
 };
 
+/*
 const colorTransition2 = () => {
   const colors = [
     'green',
@@ -48,6 +49,7 @@ const colorTransition2 = () => {
     }
   };
 };
+*/
 
 class BufferCanvas extends Component {
   propTypes: {
@@ -96,11 +98,19 @@ class BufferCanvas extends Component {
 
     context.clearRect(0, 0, width, height);
     context.beginPath();
-    context.moveTo(0, origin);
+    let moveToX = 0;
+    if (leftOffset < 0) {
+      moveToX = -leftOffset;
+    }
+
+    context.moveTo(moveToX, origin);
     for (let x = 0; x < width; x++) {
-      const val = data[leftOffset + x * STEP];
-      const y = origin - origin * val;
-      context.lineTo(x, y);
+      const index = leftOffset + x * STEP;
+      if (index >= 0) {
+        const val = data[index];
+        const y = origin - origin * val;
+        context.lineTo(x, y);
+      }
     }
     context.stroke();
 

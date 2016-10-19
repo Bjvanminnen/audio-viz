@@ -1,3 +1,5 @@
+/*eslint-disable no-unused-vars */
+
 export function bufferMod1(data) {
   if (!data instanceof Float32Array) {
     throw new Error('expected Float32Array');
@@ -10,7 +12,9 @@ export function bufferMod1(data) {
   // return minAmplitude(data, 0.02);
   // return hideRange(data, -0.1, 0.1);
   // return hideWindowedRange(data, -0.2, 0.2, 150);
-  return sin(data);
+  // return sin(data);
+  // return triangleSin(data, 188);
+  return identity(data);
 }
 
 function identity(data) {
@@ -111,10 +115,64 @@ function hideWindowedRange(data, start, end, windowSize) {
   return newData;
 }
 
-function sin(data, n) {
+function sin(data) {
   let newData = data.subarray(0, data.length);
   for (let i = 0; i < newData.length; i++) {
     newData[i] = Math.sin(i / 30);
+  }
+  return newData;
+}
+
+function triangleSin(data, wavelength) {
+  let newData = data.subarray(0, data.length);
+  if (wavelength % 4 !== 0) {
+    throw new Error('require wavelength divisible by 4');
+  }
+  const quarterWave = wavelength / 4;
+  const slope = 1 / quarterWave;
+
+  for (let i = 0; i < newData.length; i++) {
+    const wavePos = i % wavelength;
+    let val;
+    if (wavePos < 2 * quarterWave) {
+      val = 1 - wavePos * slope;
+    } else {
+      val = -1 + (wavePos - 2 * quarterWave) * slope;
+    }
+    newData[i] = val;
+  }
+  return newData;
+}
+
+// Divide graph into sections where we cross 0. Turn each section into a triangle
+// where the tip is the max value in that section
+function triangularize(data) {
+  let newData = data.subarray(0, data.length);
+
+  let positive = data[0] > 0;
+  let sectionStart = 0;
+  let sectionMax = 0;
+
+  for (let i = 0; i < newData.length; i++) {
+    const thisPositive = data[i] > 0;
+    if (thisPositive !== positive) {
+      // Crossed 0, do our thing
+      const slopeIn = data[sectionMax] / (sectionMax - sectionStart);
+      for (let j = sectionStart; j <= sectionMax; j++) {
+        newData[j] = slopeIn * (j - sectionStart);
+      }
+      const slopeOut = -data[sectionMax] / (i - sectionMax);
+      for (let j = sectionMax + 1; j < i; j++) {
+        newData[j] = slopeOut * (j - sectionMax);
+      }
+
+      sectionMax = 0;
+      sectionStart = i;
+    } else {
+      if (Math.abs(data[i]) > Math.abs(data[sectionMax])) {
+        sectionMax = i;
+      }
+    }
   }
   return newData;
 }

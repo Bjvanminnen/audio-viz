@@ -27,7 +27,7 @@ class BufferCanvasController extends Component {
     super(props);
 
     this.state = {
-      offset: 1000000,
+      offset: 0,
       source: null,
       cursor: {
         offset: 0,
@@ -76,7 +76,7 @@ class BufferCanvasController extends Component {
 
   onBlurOffset(event) {
     this.refs.offset.setAttribute('type', undefined);
-    this.setState({offset: parseInt(event.target.value) });
+    this.setState({offset: parseInt(event.target.value, 10) });
   }
 
   onFocusOffset() {
