@@ -41,7 +41,7 @@ class App extends Component {
         <SourceBufferCanvas
           width={width}
           height={height}
-          file='heartbeats.mp3'
+          file='firstfires.mp3'
           fullScreenMode={isFullScreen()}
         />
 

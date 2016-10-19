@@ -8,6 +8,45 @@ const styles = {
   }
 };
 
+const colorTransition = () => {
+  let red = 255;
+  let green = 0;
+  let blue = 0;
+
+  let delta = 3;
+  return {
+    getColor() {
+      const nextColor = `rgb(${red}, ${green}, ${blue})`;
+
+      green += delta;
+      if (green > 255 || green < 0) {
+        delta *= -1;
+      }
+      return nextColor;
+    }
+  };
+};
+
+const colorTransition2 = () => {
+  const colors = [
+    'green',
+    'orange',
+    'yellow',
+    // 'green',
+    // 'blue',
+    // 'indigo',
+    // 'violet'
+  ];
+  let index = 0;
+  return {
+    getColor() {
+      const nextColor = colors[index];
+      index = (index + 1) % colors.length;
+      return nextColor;
+    }
+  };
+};
+
 class BufferCanvas extends Component {
   propTypes: {
     width: PropTypes.number.isRequired,
@@ -20,16 +59,7 @@ class BufferCanvas extends Component {
     super(props);
     this.context = null;
 
-    this.colors = [
-      'blue',
-      'orange',
-      'yellow',
-      // 'green',
-      // 'blue',
-      // 'indigo',
-      // 'violet'
-    ];
-    this.colorIndex = 0;
+    this.colorTransition = colorTransition();
   }
 
   componentDidMount() {
@@ -52,8 +82,7 @@ class BufferCanvas extends Component {
 
     const origin = Math.round(height / 2);
 
-    this.colorIndex = [this.colorIndex + 1] % this.colors.length;
-    context.strokeStyle = this.colors[this.colorIndex];
+    context.strokeStyle = this.colorTransition.getColor();;
     context.lineWidth = 2;
 
     context.clearRect(0, 0, width, height);
