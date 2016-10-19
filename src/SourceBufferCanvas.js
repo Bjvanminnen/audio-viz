@@ -27,7 +27,7 @@ class SourceBufferCanvas extends Component {
     const filepath = process.env.PUBLIC_URL + '/sounds/' + this.props.file;
     loadBuffer(filepath).then(buffer => {
       const data = buffer.getChannelData(0);
-      this.setState({data: bufferMod1(data)});
+      this.setState({data});
     });
   }
 
@@ -43,7 +43,7 @@ class SourceBufferCanvas extends Component {
           width={width}
           height={height}
           fullScreenMode={fullScreenMode}
-          data={this.state.data}
+          data={[this.state.data, bufferMod1(this.state.data)]}
         />
       </div>
     );

@@ -27,7 +27,7 @@ function isFullScreen() {
 class App extends Component {
   render() {
     const width = isFullScreen() ? screen.width - 8 : 1800;
-    const height = isFullScreen() ? screen.height - 6 : 600;
+    const height = isFullScreen() ? screen.height - 6 : 500;
     return (
       <div>
         {

@@ -56,7 +56,9 @@ class BufferCanvas extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     offset: PropTypes.number.isRequired,
-    data: PropTypes.instanceOf(Float32Array).isRequired,    
+    data: PropTypes.arrayOf(
+      PropTypes.instanceOf(Float32Array)
+    ).isRequired,
     logIndex: PropTypes.func
   }
 
@@ -89,31 +91,40 @@ class BufferCanvas extends Component {
     const { context } = this;
     const { width, height, offset, data } = this.props;
 
-    const leftOffset = offset - STEP * Math.round(width / 2);
-
-    const origin = Math.round(height / 2);
-
-    context.strokeStyle = this.colorTransition.getColor(updateColor);;
-    context.lineWidth = 2;
-
     context.clearRect(0, 0, width, height);
-    context.beginPath();
-    let moveToX = 0;
-    if (leftOffset < 0) {
-      moveToX = -leftOffset;
-    }
 
-    context.moveTo(moveToX, origin);
-    for (let x = 0; x < width; x++) {
-      const index = leftOffset + x * STEP;
-      if (index >= 0) {
-        const val = data[index];
-        const y = origin - origin * val;
-        context.lineTo(x, y);
+    for (let bufferIndex = 0; bufferIndex < data.length; bufferIndex++) {
+      const buffer = data[bufferIndex];
+
+      const leftOffset = offset - STEP * Math.round(width / 2);
+
+      const origin = Math.round(height / 2);
+
+      if (bufferIndex === 0) {
+        // context.strokeStyle = this.colorTransition.getColor(updateColor);
+        context.strokeStyle = 'red';
+      } else {
+        context.strokeStyle = 'white';
       }
-    }
-    context.stroke();
+      context.lineWidth = 2;
 
+      context.beginPath();
+      let moveToX = 0;
+      if (leftOffset < 0) {
+        moveToX = -leftOffset;
+      }
+
+      context.moveTo(moveToX, origin);
+      for (let x = 0; x < width; x++) {
+        const index = leftOffset + x * STEP;
+        if (index >= 0) {
+          const val = buffer[index];
+          const y = origin - origin * val;
+          context.lineTo(x, y);
+        }
+      }
+      context.stroke();
+    }
     context.strokeStyle = 'white';
     context.lineWidth = 1;
     context.beginPath();
@@ -133,6 +144,8 @@ class BufferCanvas extends Component {
     const index = leftOffset + xClick;
     const origin = Math.round(height / 2);
 
+    const buffer = data[0];
+
     this.drawCanvas(false);
 
     const { context } = this;
@@ -145,12 +158,12 @@ class BufferCanvas extends Component {
     context.stroke();
     context.strokeStyle = 'white';
     context.beginPath();
-    context.arc(xClick, origin - origin * data[index], 5, 0, 2 * Math.PI);
+    context.arc(xClick, origin - origin * buffer[index], 5, 0, 2 * Math.PI);
     context.fill();
     context.stroke();
 
     if (logCursorChange) {
-      logCursorChange(index, data[index]);
+      logCursorChange(index, buffer[index]);
     }
   }
 

@@ -19,7 +19,9 @@ class BufferCanvasController extends Component {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    data: PropTypes.instanceOf(Float32Array).isRequired,    
+    data: PropTypes.arrayOf(
+      PropTypes.instanceOf(Float32Array)
+    ).isRequired,
     fullScreenMode: PropTypes.bool.isRequired
   }
 
@@ -88,7 +90,7 @@ class BufferCanvasController extends Component {
     if (this.state.source) {
       return;
     }
-    const source = playData(this.props.data.subarray(this.state.offset));
+    const source = playData(this.props.data[0].subarray(this.state.offset));
     const audioContext = source.context;
     const startTime = audioContext.currentTime;
     const originalOffset = this.state.offset;

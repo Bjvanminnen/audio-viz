@@ -24,7 +24,7 @@ function identity(data) {
 // Only take 1 in every n data points. Fill in remainder with last data point
 // taken.
 function desample(data, n) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     newData[i] = data[i - i % n];
   }
@@ -32,7 +32,7 @@ function desample(data, n) {
 }
 
 function linearDesampled(data, n) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   let lastVal = 0;
   let lastIndex = 0;
   for (let i = 0; i < newData.length; i++) {
@@ -54,7 +54,7 @@ function linearDesampled(data, n) {
 
 // Don't allow the absolute value of anything to be greater than max
 function maxAmplitude(data, max) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     const val = data[i];
     if (val > 0) {
@@ -68,7 +68,7 @@ function maxAmplitude(data, max) {
 
 // Don't allow the absolute value of anything to be less than min
 function minAmplitude(data, min) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     const val = data[i];
     if (val > 0) {
@@ -82,7 +82,7 @@ function minAmplitude(data, min) {
 
 // Anything in range (start, end) gets turned into 0
 function hideRange(data, start, end) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     const val = data[i];
     if (val >= start && val <= end) {
@@ -99,7 +99,7 @@ function hideWindowedRange(data, start, end, windowSize) {
     windowSize++;
   }
 
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   let outOfRangeCount = 0;
   for (let i = 0; i < newData.length; i++) {
     const val = data[i];
@@ -116,7 +116,7 @@ function hideWindowedRange(data, start, end, windowSize) {
 }
 
 function sin(data) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     newData[i] = Math.sin(i / 30);
   }
@@ -124,7 +124,7 @@ function sin(data) {
 }
 
 function triangleSin(data, wavelength) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
   if (wavelength % 4 !== 0) {
     throw new Error('require wavelength divisible by 4');
   }
@@ -147,7 +147,7 @@ function triangleSin(data, wavelength) {
 // Divide graph into sections where we cross 0. Turn each section into a triangle
 // where the tip is the max value in that section
 function triangularize(data) {
-  let newData = data.subarray(0, data.length);
+  let newData = data.slice(0);
 
   let positive = data[0] > 0;
   let sectionStart = 0;
