@@ -16,10 +16,10 @@ const styles = {
 };
 
 class BufferCanvasController extends Component {
-  propTypes: {
+  static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    data: PropTypes.array.isRequired,
+    data: PropTypes.instanceOf(Float32Array).isRequired,    
     fullScreenMode: PropTypes.bool.isRequired
   }
 

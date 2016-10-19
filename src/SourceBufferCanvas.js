@@ -8,7 +8,7 @@ import { bufferMod1 } from './bufferModification';
  * renders a BufferCanvas
  */
 class SourceBufferCanvas extends Component {
-  propTypes: {
+  static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     file: PropTypes.string.isRequired,

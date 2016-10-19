@@ -14,7 +14,7 @@ export function bufferMod1(data) {
   // return hideWindowedRange(data, -0.2, 0.2, 150);
   // return sin(data);
   // return triangleSin(data, 188);
-  return identity(data);
+  return desample(data, 8);
 }
 
 function identity(data) {

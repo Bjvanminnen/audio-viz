@@ -52,11 +52,11 @@ const colorTransition2 = () => {
 */
 
 class BufferCanvas extends Component {
-  propTypes: {
+  static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     offset: PropTypes.number.isRequired,
-    data: PropTypes.array.isRequired,
+    data: PropTypes.instanceOf(Float32Array).isRequired,    
     logIndex: PropTypes.func
   }
 
