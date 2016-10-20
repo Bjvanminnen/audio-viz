@@ -150,7 +150,7 @@ class BufferCanvasController extends Component {
                 onFocus={this.onFocusOffset}
                 onBlur={this.onBlurOffset}
               />
-              <span> of {data.length.toLocaleString()}</span>
+            <span> of {data[0].length.toLocaleString()}</span>
             </div>
             <button
               style={styles.button}

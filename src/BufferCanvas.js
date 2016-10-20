@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-const STEP = 1;
+const STEP = 4;
 
 const styles = {
   canvas: {
@@ -100,7 +100,7 @@ class BufferCanvas extends Component {
 
       const origin = Math.round(height / 2);
 
-      if (bufferIndex === 0) {
+      if (bufferIndex === 1) {
         // context.strokeStyle = this.colorTransition.getColor(updateColor);
         context.strokeStyle = 'red';
       } else {

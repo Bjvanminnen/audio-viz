@@ -14,7 +14,8 @@ export function bufferMod1(data) {
   // return hideWindowedRange(data, -0.2, 0.2, 150);
   // return sin(data);
   // return triangleSin(data, 188);
-  return desample(data, 8);
+  // return desample(data, 8);
+  return trisin(data);
 }
 
 function identity(data) {
@@ -123,6 +124,14 @@ function sin(data) {
   return newData;
 }
 
+function halfSinLifted(data) {
+  let newData = data.slice(0);
+  for (let i = 0; i < newData.length; i++) {
+    newData[i] = Math.sin(i / 30) / 4 + 0.000001 * i;
+  }
+  return newData;
+}
+
 function triangleSin(data, wavelength) {
   let newData = data.slice(0);
   if (wavelength % 4 !== 0) {
@@ -157,17 +166,82 @@ function triangularize(data) {
     const thisPositive = data[i] > 0;
     if (thisPositive !== positive) {
       // Crossed 0, do our thing
-      const slopeIn = data[sectionMax] / (sectionMax - sectionStart);
+      const slopeIn = (data[sectionMax] - data[sectionStart]) /
+        (sectionMax - sectionStart);
       for (let j = sectionStart; j <= sectionMax; j++) {
         newData[j] = slopeIn * (j - sectionStart);
       }
       const slopeOut = -data[sectionMax] / (i - sectionMax);
       for (let j = sectionMax + 1; j < i; j++) {
-        newData[j] = slopeOut * (j - sectionMax);
+        newData[j] = data[sectionMax] + slopeOut * (j - sectionMax);
       }
 
-      sectionMax = 0;
       sectionStart = i;
+      sectionMax = sectionStart;
+      positive = !positive;
+    } else {
+      if (Math.abs(data[i]) > Math.abs(data[sectionMax])) {
+        sectionMax = i;
+      }
+    }
+  }
+  return newData;
+}
+
+const sinCurve = (startVal, endVal, width) => {
+  let curve = [];
+  let quartile;
+  let offsetY;
+  const positive = (startVal + endVal) > 0;
+  if (positive) {
+    if (endVal > startVal) {
+      quartile = 0;
+      offsetY = startVal;
+    } else {
+      quartile = 1;
+      offsetY = endVal;
+    }
+  } else {
+    if (endVal < startVal) {
+      quartile = 2;
+      offsetY = startVal;
+    } else {
+      quartile = 3;
+      offsetY = endVal;
+    }
+  }
+
+  const amplitude = Math.abs(endVal - startVal);
+  for (let i = 0; i < width; i++) {
+    curve.push(offsetY +
+      Math.sin((i / width + quartile) * Math.PI / 2) * amplitude);
+  }
+  return curve;
+}
+
+// Same as triangle, but try to draw curves instead of triangles using sin
+function trisin(data) {
+  let newData = data.slice(0);
+
+  let positive = data[0] > 0;
+  let sectionStart = 0;
+  let sectionMax = 0;
+
+  for (let i = 0; i < newData.length; i++) {
+    const thisPositive = data[i] > 0;
+    if (thisPositive !== positive) {
+      const curve = sinCurve(data[sectionStart], data[sectionMax],
+        sectionMax - sectionStart);
+      for (let j = 0; j < curve.length; j++) {
+        newData[sectionStart + j] = curve[j];
+      }
+      const curve2 = sinCurve(data[sectionMax], data[i], i - sectionMax);
+      for (let j = 0; j < curve2.length; j++) {
+        newData[sectionMax + j] = curve2[j];
+      }
+      sectionStart = i;
+      sectionMax = sectionStart;
+      positive = !positive;
     } else {
       if (Math.abs(data[i]) > Math.abs(data[sectionMax])) {
         sectionMax = i;

@@ -43,7 +43,7 @@ class SourceBufferCanvas extends Component {
           width={width}
           height={height}
           fullScreenMode={fullScreenMode}
-          data={[this.state.data, bufferMod1(this.state.data)]}
+          data={[bufferMod1(this.state.data), this.state.data]}
         />
       </div>
     );
