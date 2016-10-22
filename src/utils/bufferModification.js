@@ -12,11 +12,11 @@ export function bufferMod1(data) {
   // return minAmplitude(data, 0.02);
   // return hideRange(data, -0.1, 0.1);
   // return hideWindowedRange(data, -0.2, 0.2, 150);
-  // return sin(data, 40);
+  return sin(data, 40);
   // return triangleSin(data, 188);
   // return desample(data, 8);
   // return trisin(data);
-  return combine(sin(data, 40), sin(data, 30));
+  // return combine(sin(data, 40), sin(data, 30));
 }
 
 function combine(stream1, stream2) {

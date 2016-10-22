@@ -19,10 +19,6 @@ class BufferCanvasController extends Component {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    data: PropTypes.arrayOf(
-      PropTypes.instanceOf(Float32Array)
-    ).isRequired,
-    playIndex: PropTypes.number,
     fullScreenMode: PropTypes.bool.isRequired
   }
 
@@ -31,7 +27,7 @@ class BufferCanvasController extends Component {
 
     this.state = {
       offset: 0,
-      source: null,
+      sourceNode: null,
       cursor: {
         offset: 0,
         val: 0
@@ -88,17 +84,17 @@ class BufferCanvasController extends Component {
   }
 
   play() {
-    if (this.state.source) {
+    if (this.state.sourceNode) {
       return;
     }
     const playIndex = this.props.playIndex || 0;
     const data = this.props.data[playIndex].subarray(this.state.offset);
-    const source = playData(data);
-    const audioContext = source.context;
+    const sourceNode = playData(data);
+    const audioContext = sourceNode.context;
     const startTime = audioContext.currentTime;
     const originalOffset = this.state.offset;
 
-    this.setState({source});
+    this.setState({sourceNode});
 
     const startDate = new Date();
     let numUpdates = 0;
@@ -118,8 +114,8 @@ class BufferCanvasController extends Component {
   }
 
   stop() {
-    this.state.source.stop();
-    this.setState({source: null});
+    this.state.sourceNode.stop();
+    this.setState({sourceNode: null});
     window.clearInterval(this.offsetUpdater);
   }
 
@@ -131,55 +127,63 @@ class BufferCanvasController extends Component {
 
   render() {
     const { width, height, data, fullScreenMode } = this.props;
-    const { offset, source } = this.state;
+    const { offset, sourceNode } = this.state;
 
-    return (
-      <div>
-        <BufferCanvas
-          height={height}
-          width={width}
-          offset={offset}
-          data={data}
-          step={4}
-          logCursorChange={this.logCursorChange}
-        />
-        {!fullScreenMode &&
-          <div>
-            <div>
-              <span>Offset: </span>
-              <input
-                ref="offset"
-                style={styles.input}
-                defaultValue={offset}
-                onFocus={this.onFocusOffset}
-                onBlur={this.onBlurOffset}
-              />
-            <span> of {data[0].length.toLocaleString()}</span>
-            </div>
-            <button
-              style={styles.button}
-              disabled={!!source}
-              onClick={this.play}
-            >
-              Play
-            </button>
-            <button
-              style={styles.button}
-              disabled={!source}
-              onClick={this.stop}
-            >
-              Stop
-            </button>
-            <div ref="fps">0</div>
-            <div>
-              <span>{this.state.cursor.offset.toLocaleString()}</span>
-              <span> </span>
-              <span>{this.state.cursor.val}</span>
-            </div>
-          </div>
-        }
-      </div>
-    );
+    return <BufferCanvas
+      height={height}
+      width={width}
+      offset={offset}
+      step={1}
+      logCursorChange={this.logCursorChange}
+    />;
+
+    // return (
+    //   <div>
+    //     <BufferCanvas
+    //       height={height}
+    //       width={width}
+    //       offset={offset}
+    //       data={data}
+    //       step={4}
+    //       logCursorChange={this.logCursorChange}
+    //     />
+    //     {!fullScreenMode &&
+    //       <div>
+    //         <div>
+    //           <span>Offset: </span>
+    //           <input
+    //             ref="offset"
+    //             style={styles.input}
+    //             defaultValue={offset}
+    //             onFocus={this.onFocusOffset}
+    //             onBlur={this.onBlurOffset}
+    //           />
+    //         <span> of {data[0].length.toLocaleString()}</span>
+    //         </div>
+    //         <button
+    //           style={styles.button}
+    //           disabled={!!sourceNode}
+    //           onClick={this.play}
+    //         >
+    //           Play
+    //         </button>
+    //         <button
+    //           style={styles.button}
+    //           disabled={!sourceNode}
+    //           onClick={this.stop}
+    //         >
+    //           Stop
+    //         </button>
+    //         <div ref="fps">0</div>
+    //         <div>
+    //           <span>{this.state.cursor.offset.toLocaleString()}</span>
+    //           <span> </span>
+    //           <span>{this.state.cursor.val}</span>
+    //         </div>
+    //       </div>
+    //     }
+    //   </div>
+    // );
   }
 };
 

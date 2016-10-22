@@ -1,9 +1,9 @@
 /*eslint-disable no-unused-vars */
 
 import React, { Component } from 'react';
-import OscillatorControls from './OscillatorControls';
-import SourceBufferControls from './SourceBufferControls';
-import SourceBufferCanvas from './SourceBufferCanvas';
+// import OscillatorControls zfrom './OscillatorControls';
+// import SourceBufferControls from './SourceBufferControls';
+import BufferCanvasController from './BufferCanvasController';
 
 const styles = {
   canvas: {
@@ -40,10 +40,9 @@ class App extends Component {
         // <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
         // <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
         }
-        <SourceBufferCanvas
+        <BufferCanvasController
           width={width}
           height={height}
-          file='bloop.wav'
           fullScreenMode={isFullScreen()}
         />
 

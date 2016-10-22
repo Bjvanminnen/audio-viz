@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 const styles = {
   canvas: {
@@ -7,56 +8,12 @@ const styles = {
   }
 };
 
-// const colorTransition = () => {
-//   let red = 255;
-//   let green = 0;
-//   let blue = 0;
-//
-//   let delta = 3;
-//   return {
-//     getColor(updateColor) {
-//       if (updateColor) {
-//         green += delta;
-//         if (green > 255 || green < 0) {
-//           delta *= -1;
-//         }
-//       }
-//       return `rgb(${red}, ${green}, ${blue})`;
-//     }
-//   };
-// };
-
-/*
-const colorTransition2 = () => {
-  const colors = [
-    'green',
-    'orange',
-    'yellow',
-    // 'green',
-    // 'blue',
-    // 'indigo',
-    // 'violet'
-  ];
-  let index = 0;
-  return {
-    getColor() {
-      const nextColor = colors[index];
-      index = (index + 1) % colors.length;
-      return nextColor;
-    }
-  };
-};
-*/
-
 class BufferCanvas extends Component {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     offset: PropTypes.number.isRequired,
     step: PropTypes.number.isRequired,
-    data: PropTypes.arrayOf(
-      PropTypes.instanceOf(Float32Array)
-    ).isRequired,
     logCursorChange: PropTypes.func
   }
 
@@ -80,19 +37,21 @@ class BufferCanvas extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.offset !== nextProps.offset) {
-      this.drawCanvas();
+    if (this.props.offset !== nextProps.offset ||
+        this.props.streamIds !== nextProps.streamIds) {
+      // schedule so that props have been updated by the time it happens
+      setTimeout(() => this.drawCanvas(), 0);
     }
   }
 
   drawCanvas(updateColor = true) {
     const { context } = this;
-    const { width, height, offset, data, step } = this.props;
+    const { width, height, offset, step, streamIds, streams } = this.props;
+
 
     context.clearRect(0, 0, width, height);
-
-    for (let bufferIndex = 0; bufferIndex < data.length; bufferIndex++) {
-      const buffer = data[bufferIndex];
+    streamIds.forEach((streamId, bufferIndex) => {
+      const buffer = streams.get(streamId);
 
       const leftOffset = offset - step * Math.round(width / 2);
 
@@ -122,7 +81,8 @@ class BufferCanvas extends Component {
         }
       }
       context.stroke();
-    }
+    });
+    
     context.strokeStyle = 'white';
     context.lineWidth = 1;
     context.beginPath();
@@ -172,10 +132,11 @@ class BufferCanvas extends Component {
   render() {
     const { width, height } = this.props;
 
+    // onMouseMove={this.onMouseMove}
+    // onMouseOut={this.onMouseOut}
     return (
       <canvas
-        onMouseMove={this.onMouseMove}
-        onMouseOut={this.onMouseOut}
+
         height={height}
         width={width}
         style={styles.canvas}
@@ -184,4 +145,9 @@ class BufferCanvas extends Component {
   }
 };
 
-export default BufferCanvas;
+export default connect(state => {
+  console.log('connected ');
+  return ({
+  streamIds: state.dataStreams.streamIds,
+  streams: state.dataStreams.streams
+})})(BufferCanvas);

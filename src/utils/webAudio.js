@@ -45,6 +45,10 @@ export function loadBuffer(url) {
   });
 };
 
+/**
+ * @param {Float32Array}
+ * @returns {AudioBufferSourceNode}
+ */
 export function playData(data) {
   const audioCtx = getContext();
   const buffer = audioCtx.createBuffer(1, data.length, audioCtx.sampleRate);
@@ -56,7 +60,7 @@ export function playData(data) {
   const source = audioCtx.createBufferSource();
   source.buffer = buffer;
   source.connect(audioCtx.destination);
-  source.start();  
+  source.start();
 
   return source;
 }

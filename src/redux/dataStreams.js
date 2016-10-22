@@ -15,6 +15,7 @@ export const setPlayStream = (streamId) => ({
 
 const DataStreamRecord = Immutable.Record({
   playStreamId: null,
+  streamIds: Immutable.List(),
   streams: Immutable.Map()
 });
 const initialState = new DataStreamRecord();
@@ -32,7 +33,20 @@ export default function dataStreams(state = initialState, action) {
       throw new Error('stream already exists');
     }
 
-    return state.setIn(['streams', streamId], stream);
+    console.log('added stream');
+    return state.merge({
+      streamIds: state.streamIds.push(streamId),
+      streams: state.streams.set(streamId, stream)
+    });
   }
+
+  if (type === SET_PLAY_STREAM) {
+    const { streamId } = action;
+    if (!streamId) {
+      throw new Error('require streamId');
+    }
+    return state.set('playStreamId', streamId);
+  }
+
   return state;
 }
