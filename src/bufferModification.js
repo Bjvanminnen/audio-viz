@@ -12,10 +12,24 @@ export function bufferMod1(data) {
   // return minAmplitude(data, 0.02);
   // return hideRange(data, -0.1, 0.1);
   // return hideWindowedRange(data, -0.2, 0.2, 150);
-  // return sin(data);
+  // return sin(data, 40);
   // return triangleSin(data, 188);
   // return desample(data, 8);
-  return trisin(data);
+  // return trisin(data);
+  return combine(sin(data, 40), sin(data, 30));
+}
+
+function combine(stream1, stream2) {
+  if (stream1.length !== stream2.length) {
+    // could theoretically just combine for length of smaller
+    throw new Error('streams must be the same size');
+  }
+
+  let newData = stream1.slice(0);
+  for (let i = 0; i < newData.length; i++) {
+    newData[i] = (stream1[i] + stream2[i]) / 2;
+  }
+  return newData;
 }
 
 function identity(data) {
@@ -116,10 +130,10 @@ function hideWindowedRange(data, start, end, windowSize) {
   return newData;
 }
 
-function sin(data) {
+function sin(data, divisor = 30) {
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
-    newData[i] = Math.sin(i / 30);
+    newData[i] = Math.sin(i / divisor);
   }
   return newData;
 }
