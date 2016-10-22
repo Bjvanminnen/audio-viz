@@ -133,8 +133,6 @@ class BufferCanvasController extends Component {
     const { width, height, data, fullScreenMode } = this.props;
     const { offset, source } = this.state;
 
-    const playIndex = this.props.playIndex || 0;
-    
     return (
       <div>
         <BufferCanvas

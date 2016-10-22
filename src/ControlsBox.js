@@ -22,7 +22,8 @@ const styles = {
 
 class ControlsBox extends Component {
   static propTypes = {
-    title: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired,
+    children: PropTypes.arrayOf(PropTypes.element)
   }
 
   constructor(props) {

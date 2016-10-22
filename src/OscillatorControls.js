@@ -18,7 +18,8 @@ const styles = {
 
 class OscillatorControls extends Component {
   static propTypes = {
-    frequency: PropTypes.number.isRequired
+    frequency: PropTypes.number.isRequired,
+    color: PropTypes.string,
   };
 
   constructor(props) {

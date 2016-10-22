@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 
 const STEP = 4;
 
@@ -59,7 +58,7 @@ class BufferCanvas extends Component {
     data: PropTypes.arrayOf(
       PropTypes.instanceOf(Float32Array)
     ).isRequired,
-    logIndex: PropTypes.func
+    logCursorChange: PropTypes.func
   }
 
   constructor(props) {
@@ -72,7 +71,7 @@ class BufferCanvas extends Component {
   }
 
   componentDidMount() {
-    const canvas = ReactDOM.findDOMNode(this.refs.canvas);
+    const canvas = this.refs.canvas;
     this.context = canvas.getContext('2d');
     this.drawCanvas();
   }

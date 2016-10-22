@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import createSourceBufferStream from './createSourceBufferStream';
 import ControlsBox from './ControlsBox';
 
@@ -9,6 +9,10 @@ const styles = {
 };
 
 class SourceBufferControls extends Component {
+  static propTypes = {
+    file: PropTypes.string.isRequired
+  };
+
   constructor(props) {
     super(props);
 
