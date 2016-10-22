@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 
-const STEP = 4;
-
 const styles = {
   canvas: {
     border: '1px solid black',
@@ -55,6 +53,7 @@ class BufferCanvas extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     offset: PropTypes.number.isRequired,
+    step: PropTypes.number.isRequired,
     data: PropTypes.arrayOf(
       PropTypes.instanceOf(Float32Array)
     ).isRequired,
@@ -88,14 +87,14 @@ class BufferCanvas extends Component {
 
   drawCanvas(updateColor = true) {
     const { context } = this;
-    const { width, height, offset, data } = this.props;
+    const { width, height, offset, data, step } = this.props;
 
     context.clearRect(0, 0, width, height);
 
     for (let bufferIndex = 0; bufferIndex < data.length; bufferIndex++) {
       const buffer = data[bufferIndex];
 
-      const leftOffset = offset - STEP * Math.round(width / 2);
+      const leftOffset = offset - step * Math.round(width / 2);
 
       const origin = Math.round(height / 2);
 
@@ -115,7 +114,7 @@ class BufferCanvas extends Component {
 
       context.moveTo(moveToX, origin);
       for (let x = 0; x < width; x++) {
-        const index = leftOffset + x * STEP;
+        const index = leftOffset + x * step;
         if (index >= 0) {
           const val = buffer[index];
           const y = origin - origin * val;
@@ -137,8 +136,8 @@ class BufferCanvas extends Component {
   }
 
   onMouseMove(event) {
-    const { data, offset, width, height, logCursorChange } = this.props;
-    const leftOffset = offset - STEP * Math.round(width / 2);
+    const { step, data, offset, width, height, logCursorChange } = this.props;
+    const leftOffset = offset - step * Math.round(width / 2);
     const xClick = event.clientX - event.target.offsetLeft - 1;
     const index = leftOffset + xClick;
     const origin = Math.round(height / 2);
