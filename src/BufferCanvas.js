@@ -7,24 +7,24 @@ const styles = {
   }
 };
 
-const colorTransition = () => {
-  let red = 255;
-  let green = 0;
-  let blue = 0;
-
-  let delta = 3;
-  return {
-    getColor(updateColor) {
-      if (updateColor) {
-        green += delta;
-        if (green > 255 || green < 0) {
-          delta *= -1;
-        }
-      }
-      return `rgb(${red}, ${green}, ${blue})`;
-    }
-  };
-};
+// const colorTransition = () => {
+//   let red = 255;
+//   let green = 0;
+//   let blue = 0;
+//
+//   let delta = 3;
+//   return {
+//     getColor(updateColor) {
+//       if (updateColor) {
+//         green += delta;
+//         if (green > 255 || green < 0) {
+//           delta *= -1;
+//         }
+//       }
+//       return `rgb(${red}, ${green}, ${blue})`;
+//     }
+//   };
+// };
 
 /*
 const colorTransition2 = () => {
@@ -64,7 +64,7 @@ class BufferCanvas extends Component {
     super(props);
     this.context = null;
 
-    this.colorTransition = colorTransition();
+    // this.colorTransition = colorTransition();
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseOut = this.onMouseOut.bind(this);
   }
