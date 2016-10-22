@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 
 const styles = {
   canvas: {
@@ -14,7 +15,12 @@ class BufferCanvas extends Component {
     height: PropTypes.number.isRequired,
     offset: PropTypes.number.isRequired,
     step: PropTypes.number.isRequired,
-    logCursorChange: PropTypes.func
+    logCursorChange: PropTypes.func,
+
+    //redux
+    streamIds: PropTypes.instanceOf(Immutable.List).isRequired,
+    streams: PropTypes.instanceOf(Immutable.Map).isRequired,
+    infoStreamId: PropTypes.string
   }
 
   constructor(props) {
@@ -44,25 +50,38 @@ class BufferCanvas extends Component {
     }
   }
 
+  /**
+   * @returns {number} x position on canvas to start drawing data at so that 0
+   *   is at half width
+   */
+  getLeftOffset() {
+    const { width, offset, step } = this.props;
+    return offset - step * Math.round(width / 2);
+  }
+
+  /**
+   * @returns {number} y position on canvas of origin
+   */
+  getOriginY() {
+    const { height } = this.props;
+    return Math.round(height / 2);
+  }
+
   drawCanvas(updateColor = true) {
     const { context } = this;
-    const { width, height, offset, step, streamIds, streams } = this.props;
+    const { width, height, step, streamIds, streams } = this.props;
 
+    const colors = ['white', 'red'];
 
     context.clearRect(0, 0, width, height);
     streamIds.forEach((streamId, bufferIndex) => {
       const buffer = streams.get(streamId);
 
-      const leftOffset = offset - step * Math.round(width / 2);
+      const leftOffset = this.getLeftOffset();
+      const origin = this.getOriginY();
 
-      const origin = Math.round(height / 2);
-
-      if (bufferIndex === 1) {
-        // context.strokeStyle = this.colorTransition.getColor(updateColor);
-        context.strokeStyle = 'red';
-      } else {
-        context.strokeStyle = 'white';
-      }
+      const color = colors[bufferIndex % colors.length];
+      context.strokeStyle = color;
       context.lineWidth = 2;
 
       context.beginPath();
@@ -82,7 +101,7 @@ class BufferCanvas extends Component {
       }
       context.stroke();
     });
-    
+
     context.strokeStyle = 'white';
     context.lineWidth = 1;
     context.beginPath();
@@ -96,13 +115,17 @@ class BufferCanvas extends Component {
   }
 
   onMouseMove(event) {
-    const { step, data, offset, width, height, logCursorChange } = this.props;
-    const leftOffset = offset - step * Math.round(width / 2);
+    const { height, logCursorChange, streams, infoStreamId } = this.props;
+
+    const buffer = streams.get(infoStreamId);
+    if (!buffer) {
+      return;
+    }
+
+    const leftOffset = this.getLeftOffset();
     const xClick = event.clientX - event.target.offsetLeft - 1;
     const index = leftOffset + xClick;
-    const origin = Math.round(height / 2);
-
-    const buffer = data[0];
+    const originY = this.getOriginY();
 
     this.drawCanvas(false);
 
@@ -116,7 +139,7 @@ class BufferCanvas extends Component {
     context.stroke();
     context.strokeStyle = 'white';
     context.beginPath();
-    context.arc(xClick, origin - origin * buffer[index], 5, 0, 2 * Math.PI);
+    context.arc(xClick, originY - originY * buffer[index], 5, 0, 2 * Math.PI);
     context.fill();
     context.stroke();
 
@@ -132,11 +155,10 @@ class BufferCanvas extends Component {
   render() {
     const { width, height } = this.props;
 
-    // onMouseMove={this.onMouseMove}
-    // onMouseOut={this.onMouseOut}
     return (
       <canvas
-
+        onMouseMove={this.onMouseMove}
+        onMouseOut={this.onMouseOut}
         height={height}
         width={width}
         style={styles.canvas}
@@ -145,9 +167,8 @@ class BufferCanvas extends Component {
   }
 };
 
-export default connect(state => {
-  console.log('connected ');
-  return ({
+export default connect(state => ({
+  infoStreamId: state.dataStreams.infoStreamId,
   streamIds: state.dataStreams.streamIds,
   streams: state.dataStreams.streams
-})})(BufferCanvas);
+}))(BufferCanvas);

@@ -13,8 +13,16 @@ export const setPlayStream = (streamId) => ({
   streamId
 });
 
+const SET_INFO_STREAM = 'dataStreams/SET_INFO_STREAM';
+export const setInfoStream = (streamId) => ({
+  type: SET_INFO_STREAM,
+  streamId
+});
+
+
 const DataStreamRecord = Immutable.Record({
   playStreamId: null,
+  infoStreamId: null,
   streamIds: Immutable.List(),
   streams: Immutable.Map()
 });
@@ -46,6 +54,14 @@ export default function dataStreams(state = initialState, action) {
       throw new Error('require streamId');
     }
     return state.set('playStreamId', streamId);
+  }
+
+  if (type === SET_INFO_STREAM) {
+    const { streamId } = action;
+    if (!streamId) {
+      throw new Error('require streamId');
+    }
+    return state.set('infoStreamId', streamId);
   }
 
   return state;

@@ -1,6 +1,6 @@
 import getStore from './redux/getStore';
 import { loadBuffer } from './utils/webAudio';
-import { addStream, setPlayStream } from './redux/dataStreams';
+import { addStream, setPlayStream, setInfoStream } from './redux/dataStreams';
 
 import { bufferMod1 } from './utils/bufferModification';
 
@@ -19,4 +19,5 @@ function addFile(filename) {
 export default function initializeStore() {
   addFile('bloop.wav');
   store.dispatch(setPlayStream('bloop.wav'));
+  store.dispatch(setInfoStream('bloop.wav'));
 }
