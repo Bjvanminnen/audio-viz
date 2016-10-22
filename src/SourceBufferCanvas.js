@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { loadBuffer } from './webAudio';
+import { loadBuffer } from './utils/webAudio';
 import BufferCanvasController from './BufferCanvasController';
-import { bufferMod1 } from './bufferModification';
+import { bufferMod1 } from './utils/bufferModification';
 
 /**
  * Wrapper around BufferCanvas that takes a file, loads it into a buffer, then

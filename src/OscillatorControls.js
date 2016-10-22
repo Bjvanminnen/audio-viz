@@ -1,7 +1,7 @@
 /*eslint-disable no-useless-escape */
 
 import React, { Component, PropTypes } from 'react';
-import createOscillatorStream from './createOscillatorStream';
+import createOscillatorStream from './utils/createOscillatorStream';
 import ControlsBox from './ControlsBox';
 
 const styles = {

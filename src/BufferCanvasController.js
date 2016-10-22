@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import BufferCanvas from './BufferCanvas';
-import { playData } from './webAudio';
+import { playData } from './utils/webAudio';
 
 const styles = {
   canvas: {

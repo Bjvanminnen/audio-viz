@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import createSourceBufferStream from './createSourceBufferStream';
+import createSourceBufferStream from './utils/createSourceBufferStream';
 import ControlsBox from './ControlsBox';
 
 const styles = {
