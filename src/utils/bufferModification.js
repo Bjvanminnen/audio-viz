@@ -34,6 +34,18 @@ export function combine(stream1, stream2) {
   return newData;
 }
 
+export function multiply(stream1, stream2) {
+  if (stream1.length !== stream2.length) {
+    throw new Error('streams must be the same size');
+  }
+
+  let newData = stream1.slice(0);
+  for (let i = 0; i < newData.length; i++) {
+    newData[i] = (stream1[i] * stream2[i]);
+  }
+  return newData;
+}
+
 export function identity(data) {
   return data;
 }
@@ -132,10 +144,12 @@ export function hideWindowedRange(data, start, end, windowSize) {
   return newData;
 }
 
-export function sin(data, divisor = 30) {
+export function sin(data, frequency, phaseShift = 0) {
+  const waveLength = 44100 / frequency;
+  const n = 2 * Math.PI / waveLength;
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
-    newData[i] = Math.sin(i / divisor);
+    newData[i] = Math.sin(phaseShift + i * n);
   }
   return newData;
 }

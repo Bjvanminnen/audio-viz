@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import getStore from '../redux/getStore';
+import { addStream } from '../redux/dataStreams';
 
 let resetCount = 0;
 const COLORS = ['red', 'blue', 'green']

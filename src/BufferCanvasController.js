@@ -48,6 +48,7 @@ class BufferCanvasController extends Component {
     this.onBlurOffset = this.onBlurOffset.bind(this);
     this.play = this.play.bind(this);
     this.stop = this.stop.bind(this);
+    this.reset = this.reset.bind(this);
     this.logCursorChange = this.logCursorChange.bind(this);
   }
 
@@ -134,6 +135,13 @@ class BufferCanvasController extends Component {
     window.clearInterval(this.offsetUpdater);
   }
 
+  reset() {
+    this.stop();
+    this.setState({
+      offset: 0
+    });
+  }
+
   logCursorChange(offset, val) {
     this.setState({
       cursor: { offset, val }
@@ -164,7 +172,13 @@ class BufferCanvasController extends Component {
                 onFocus={this.onFocusOffset}
                 onBlur={this.onBlurOffset}
               />
-            <span> of {maxStreamLength.toLocaleString()}</span>
+              <span> of {maxStreamLength.toLocaleString()}</span>
+              <button
+                onClick={this.reset}
+                style={styles.button}
+              >
+                Reset
+              </button>
             </div>
             <button
               style={styles.button}

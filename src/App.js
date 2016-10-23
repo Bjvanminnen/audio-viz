@@ -1,7 +1,7 @@
 /*eslint-disable no-unused-vars */
 
 import React, { Component } from 'react';
-// import OscillatorControls zfrom './OscillatorControls';
+// import OscillatorControls from './OscillatorControls';
 // import SourceBufferControls from './SourceBufferControls';
 import BufferCanvasController from './BufferCanvasController';
 
@@ -10,14 +10,6 @@ const styles = {
     border: '1px solid black',
     backgroundColor: 'black'
   }
-};
-
-const notes = {
-  A1: 55,
-  A2: 110,
-  C4: 261.63,
-  D4: 293.66,
-  E4: 329.63
 };
 
 function isFullScreen() {
@@ -31,7 +23,8 @@ class App extends Component {
     return (
       <div>
         {
-        // <OscillatorControls frequency={notes.A2} color='red'/>
+        //
+        // <OscillatorControls frequency={notes.A2} color='blue'/>
         // <OscillatorControls frequency={notes.D4} color='yellow'/>
         // <SourceBufferControls file='bloop.wav' />
 

@@ -72,7 +72,7 @@ class BufferCanvas extends Component {
     const { width, height, step, streamIds, streams } = this.props;
 
     // TODO: Might want this configurable in redux store somehow?
-    const colors = ['white', 'red', 'green'];
+    const colors = ['white', 'red', 'green', 'yellow'];
 
     context.clearRect(0, 0, width, height);
     streamIds.forEach((streamId, bufferIndex) => {
@@ -91,13 +91,16 @@ class BufferCanvas extends Component {
         moveToX = -leftOffset;
       }
 
-      context.moveTo(moveToX, origin);
       for (let x = 0; x < width; x++) {
         const index = leftOffset + x * step;
         if (index >= 0) {
           const val = buffer[index];
           const y = origin - origin * val;
-          context.lineTo(x, y);
+          if (x === 0) {
+            context.moveTo(x, y);
+          } else {
+            context.lineTo(x, y);
+          }
         }
       }
       context.stroke();
@@ -158,6 +161,7 @@ class BufferCanvas extends Component {
 
     return (
       <canvas
+        id="c0"
         onMouseMove={this.onMouseMove}
         onMouseOut={this.onMouseOut}
         height={height}

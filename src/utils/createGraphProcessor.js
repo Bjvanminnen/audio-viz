@@ -5,18 +5,11 @@ export default function createGraphProcessor(...args) {
     new Grapher(document.getElementById(id), { style: color })
   ));
 
-  let n = 0;
-
   return function onAudioProcess(audioEvent) {
     const numChannels = 2;
     for (let channel = 0; channel < numChannels; channel++) {
       const input = audioEvent.inputBuffer.getChannelData(channel);
       let output = audioEvent.outputBuffer.getChannelData(channel);
-
-      if (n === 0) {
-        console.log(input);
-      }
-      n++;
 
       let nonZero = false;
       // let sums = [];

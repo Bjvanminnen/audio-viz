@@ -44,11 +44,18 @@ export default function dataStreams(state = initialState, action) {
 
     const newMaxLength = Math.max(state.maxLength, stream.length);
 
-    return state.merge({
+    let nextState = state.merge({
       streamIds: state.streamIds.push(streamId),
       streams: state.streams.set(streamId, stream),
       maxLength: newMaxLength
     });
+    if (nextState.streams.size === 1) {
+      nextState = nextState.merge({
+        playStreamId: streamId,
+        infoStreamId: streamId,
+      });
+    }
+    return nextState;
   }
 
   if (type === SET_PLAY_STREAM) {

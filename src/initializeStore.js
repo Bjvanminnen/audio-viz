@@ -6,6 +6,14 @@ import { addStream, setPlayStream, setInfoStream } from './redux/dataStreams';
 
 import * as bufferMods from './utils/bufferModification';
 
+const notes = {
+  A1: 55,
+  A2: 110,
+  C4: 261.63,
+  D4: 293.66,
+  E4: 329.63
+};
+
 const store = getStore();
 
 // TODO - could make this part of a thunk action?
@@ -24,13 +32,17 @@ export default function initializeStore() {
   // store.dispatch(setPlayStream(filename));
   // store.dispatch(setInfoStream(filename));
 
-  const base = bufferMods.create(50000);
-  const one = bufferMods.sin(base, 40);
-  const two = bufferMods.sin(base, 30);
-  const combo = bufferMods.combine(one, two);
 
-  store.dispatch(addStream('one', one));
-  store.dispatch(addStream('two', two));
+
+  const base = bufferMods.create(200000);
+  const one = bufferMods.sin(base, notes.A2);
+  const two = bufferMods.sin(base, notes.A1);
+  const combo = bufferMods.combine(one, two);
+  const mult = bufferMods.multiply(one, two);
+
+  store.dispatch(addStream('A2', one));
+  store.dispatch(addStream('A1', two));
   store.dispatch(addStream('combo', combo));
-  store.dispatch(setPlayStream('combo'));
+  store.dispatch(addStream('mult', mult));
+
 }
