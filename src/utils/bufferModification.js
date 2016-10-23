@@ -1,5 +1,3 @@
-/*eslint-disable no-unused-vars */
-
 export function bufferMod1(data) {
   if (!data instanceof Float32Array) {
     throw new Error('expected Float32Array');
@@ -12,14 +10,18 @@ export function bufferMod1(data) {
   // return minAmplitude(data, 0.02);
   // return hideRange(data, -0.1, 0.1);
   // return hideWindowedRange(data, -0.2, 0.2, 150);
-  return sin(data, 40);
+  // return sin(data, 40);
   // return triangleSin(data, 188);
   // return desample(data, 8);
   // return trisin(data);
   // return combine(sin(data, 40), sin(data, 30));
 }
 
-function combine(stream1, stream2) {
+export function create(length) {
+  return new Float32Array(length);
+}
+
+export function combine(stream1, stream2) {
   if (stream1.length !== stream2.length) {
     // could theoretically just combine for length of smaller
     throw new Error('streams must be the same size');
@@ -32,13 +34,13 @@ function combine(stream1, stream2) {
   return newData;
 }
 
-function identity(data) {
+export function identity(data) {
   return data;
 }
 
 // Only take 1 in every n data points. Fill in remainder with last data point
 // taken.
-function desample(data, n) {
+export function desample(data, n) {
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     newData[i] = data[i - i % n];
@@ -46,7 +48,7 @@ function desample(data, n) {
   return newData;
 }
 
-function linearDesampled(data, n) {
+export function linearDesampled(data, n) {
   let newData = data.slice(0);
   let lastVal = 0;
   let lastIndex = 0;
@@ -68,7 +70,7 @@ function linearDesampled(data, n) {
 }
 
 // Don't allow the absolute value of anything to be greater than max
-function maxAmplitude(data, max) {
+export function maxAmplitude(data, max) {
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     const val = data[i];
@@ -82,7 +84,7 @@ function maxAmplitude(data, max) {
 }
 
 // Don't allow the absolute value of anything to be less than min
-function minAmplitude(data, min) {
+export function minAmplitude(data, min) {
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     const val = data[i];
@@ -96,7 +98,7 @@ function minAmplitude(data, min) {
 }
 
 // Anything in range (start, end) gets turned into 0
-function hideRange(data, start, end) {
+export function hideRange(data, start, end) {
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     const val = data[i];
@@ -109,7 +111,7 @@ function hideRange(data, start, end) {
 
 // Anything in range (start, end) gets turned into 0 if there are no values
 // within windowSize / 2 on either side in that range
-function hideWindowedRange(data, start, end, windowSize) {
+export function hideWindowedRange(data, start, end, windowSize) {
   if (windowSize % 2 !== 0) {
     windowSize++;
   }
@@ -130,7 +132,7 @@ function hideWindowedRange(data, start, end, windowSize) {
   return newData;
 }
 
-function sin(data, divisor = 30) {
+export function sin(data, divisor = 30) {
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     newData[i] = Math.sin(i / divisor);
@@ -138,7 +140,7 @@ function sin(data, divisor = 30) {
   return newData;
 }
 
-function halfSinLifted(data) {
+export function halfSinLifted(data) {
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
     newData[i] = Math.sin(i / 30) / 4 + 0.000001 * i;
@@ -146,7 +148,7 @@ function halfSinLifted(data) {
   return newData;
 }
 
-function triangleSin(data, wavelength) {
+export function triangleSin(data, wavelength) {
   let newData = data.slice(0);
   if (wavelength % 4 !== 0) {
     throw new Error('require wavelength divisible by 4');
@@ -169,7 +171,7 @@ function triangleSin(data, wavelength) {
 
 // Divide graph into sections where we cross 0. Turn each section into a triangle
 // where the tip is the max value in that section
-function triangularize(data) {
+export function triangularize(data) {
   let newData = data.slice(0);
 
   let positive = data[0] > 0;
@@ -234,7 +236,7 @@ const sinCurve = (startVal, endVal, width) => {
 }
 
 // Same as triangle, but try to draw curves instead of triangles using sin
-function trisin(data) {
+export function trisin(data) {
   let newData = data.slice(0);
 
   let positive = data[0] > 0;

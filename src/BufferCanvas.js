@@ -71,7 +71,8 @@ class BufferCanvas extends Component {
     const { context } = this;
     const { width, height, step, streamIds, streams } = this.props;
 
-    const colors = ['white', 'red'];
+    // TODO: Might want this configurable in redux store somehow?
+    const colors = ['white', 'red', 'green'];
 
     context.clearRect(0, 0, width, height);
     streamIds.forEach((streamId, bufferIndex) => {

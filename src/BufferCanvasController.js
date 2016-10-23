@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import Immutable from 'immutable';
+import { connect } from 'react-redux';
 import BufferCanvas from './BufferCanvas';
 import { playData } from './utils/webAudio';
 
@@ -19,7 +21,13 @@ class BufferCanvasController extends Component {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    fullScreenMode: PropTypes.bool.isRequired
+    fullScreenMode: PropTypes.bool.isRequired,
+
+    //redux
+    streamIds: PropTypes.instanceOf(Immutable.List).isRequired,
+    streams: PropTypes.instanceOf(Immutable.Map).isRequired,
+    playStreamId: PropTypes.string,
+    maxStreamLength: PropTypes.number.isRequired
   }
 
   constructor(props) {
@@ -84,12 +92,19 @@ class BufferCanvasController extends Component {
   }
 
   play() {
+    // if we're already playing, eject
     if (this.state.sourceNode) {
       return;
     }
-    const playIndex = this.props.playIndex || 0;
-    const data = this.props.data[playIndex].subarray(this.state.offset);
-    const sourceNode = playData(data);
+
+    const { playStreamId, streams } = this.props;
+
+    const playStream = streams.get(playStreamId);
+    if (!playStream) {
+      return;
+    }
+
+    const sourceNode = playData(playStream.subarray(this.state.offset));
     const audioContext = sourceNode.context;
     const startTime = audioContext.currentTime;
     const originalOffset = this.state.offset;
@@ -126,65 +141,62 @@ class BufferCanvasController extends Component {
   }
 
   render() {
-    const { width, height, data, fullScreenMode } = this.props;
+    const { width, height, fullScreenMode, playStreamId, maxStreamLength } = this.props;
     const { offset, sourceNode } = this.state;
 
-    return <BufferCanvas
-      height={height}
-      width={width}
-      offset={offset}
-      step={1}
-      logCursorChange={this.logCursorChange}
-    />;
-
-    // return (
-    //   <div>
-    //     <BufferCanvas
-    //       height={height}
-    //       width={width}
-    //       offset={offset}
-    //       data={data}
-    //       step={4}
-    //       logCursorChange={this.logCursorChange}
-    //     />
-    //     {!fullScreenMode &&
-    //       <div>
-    //         <div>
-    //           <span>Offset: </span>
-    //           <input
-    //             ref="offset"
-    //             style={styles.input}
-    //             defaultValue={offset}
-    //             onFocus={this.onFocusOffset}
-    //             onBlur={this.onBlurOffset}
-    //           />
-    //         <span> of {data[0].length.toLocaleString()}</span>
-    //         </div>
-    //         <button
-    //           style={styles.button}
-    //           disabled={!!sourceNode}
-    //           onClick={this.play}
-    //         >
-    //           Play
-    //         </button>
-    //         <button
-    //           style={styles.button}
-    //           disabled={!sourceNode}
-    //           onClick={this.stop}
-    //         >
-    //           Stop
-    //         </button>
-    //         <div ref="fps">0</div>
-    //         <div>
-    //           <span>{this.state.cursor.offset.toLocaleString()}</span>
-    //           <span> </span>
-    //           <span>{this.state.cursor.val}</span>
-    //         </div>
-    //       </div>
-    //     }
-    //   </div>
-    // );
+    return (
+      <div>
+        <BufferCanvas
+          height={height}
+          width={width}
+          offset={offset}
+          step={1}
+          logCursorChange={this.logCursorChange}
+        />
+        {!fullScreenMode &&
+          <div>
+            <div>
+              <span>Offset: </span>
+              <input
+                ref="offset"
+                style={styles.input}
+                defaultValue={offset}
+                onFocus={this.onFocusOffset}
+                onBlur={this.onBlurOffset}
+              />
+            <span> of {maxStreamLength.toLocaleString()}</span>
+            </div>
+            <button
+              style={styles.button}
+              disabled={sourceNode || !playStreamId}
+              onClick={this.play}
+            >
+              Play {playStreamId}
+            </button>
+            <button
+              style={styles.button}
+              disabled={!sourceNode}
+              onClick={this.stop}
+            >
+              Stop
+            </button>
+            <div ref="fps" style={{display: 'none'}}>0</div>
+            <div>
+              {/* TODO - could make this display all streams */ }
+              <span>{this.state.cursor.offset.toLocaleString()}</span>
+              <span> </span>
+              <span>{this.state.cursor.val}</span>
+            </div>
+          </div>
+        }
+      </div>
+    );
   }
 };
 
-export default BufferCanvasController;
+export default connect(state => ({
+  maxStreamLength: state.dataStreams.maxLength,
+  playStreamId: state.dataStreams.playStreamId,
+  streamIds: state.dataStreams.streamIds,
+  streams: state.dataStreams.streams
+}))(BufferCanvasController);

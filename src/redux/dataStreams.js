@@ -24,7 +24,8 @@ const DataStreamRecord = Immutable.Record({
   playStreamId: null,
   infoStreamId: null,
   streamIds: Immutable.List(),
-  streams: Immutable.Map()
+  streams: Immutable.Map(),
+  maxLength: 0
 });
 const initialState = new DataStreamRecord();
 
@@ -41,10 +42,12 @@ export default function dataStreams(state = initialState, action) {
       throw new Error('stream already exists');
     }
 
-    console.log('added stream');
+    const newMaxLength = Math.max(state.maxLength, stream.length);
+
     return state.merge({
       streamIds: state.streamIds.push(streamId),
-      streams: state.streams.set(streamId, stream)
+      streams: state.streams.set(streamId, stream),
+      maxLength: newMaxLength
     });
   }
 
