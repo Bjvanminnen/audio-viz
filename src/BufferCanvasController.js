@@ -158,7 +158,7 @@ class BufferCanvasController extends Component {
           height={height}
           width={width}
           offset={offset}
-          step={1}
+          step={8}
           logCursorChange={this.logCursorChange}
         />
         {!fullScreenMode &&

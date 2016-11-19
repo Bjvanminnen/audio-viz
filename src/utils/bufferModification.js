@@ -21,15 +21,20 @@ export function create(length) {
   return new Float32Array(length);
 }
 
-export function combine(stream1, stream2) {
-  if (stream1.length !== stream2.length) {
-    // could theoretically just combine for length of smaller
-    throw new Error('streams must be the same size');
-  }
+export function combine(...streams) {
+  streams.forEach(stream => {
+    if (stream.length !== streams[0].length) {
+      // could theoretically just combine for length of smaller
+      throw new Error('streams must be the same size');
+    }
+  });
 
-  let newData = stream1.slice(0);
+  let newData = streams[0].slice(0);
   for (let i = 0; i < newData.length; i++) {
-    newData[i] = (stream1[i] + stream2[i]) / 2;
+    newData[i] = 0;
+    for (let j = 0; j < streams.length; j++) {
+      newData[i] += streams[j][i];
+    }
   }
   return newData;
 }
@@ -46,8 +51,12 @@ export function multiply(stream1, stream2) {
   return newData;
 }
 
-export function identity(data) {
-  return data;
+export function constant(data, val) {
+  let newData = data.slice(0);
+  for (let i = 0; i < newData.length; i++) {
+    newData[i] = val;
+  }
+  return newData;
 }
 
 // Only take 1 in every n data points. Fill in remainder with last data point
@@ -144,12 +153,24 @@ export function hideWindowedRange(data, start, end, windowSize) {
   return newData;
 }
 
-export function sin(data, frequency, phaseShift = 0) {
+export function sin(data, frequency) {
   const waveLength = 44100 / frequency;
   const n = 2 * Math.PI / waveLength;
   let newData = data.slice(0);
   for (let i = 0; i < newData.length; i++) {
-    newData[i] = Math.sin(phaseShift + i * n);
+    newData[i] = Math.sin(i * n);
+  }
+  return newData;
+}
+
+export function sinWaveLength(data, wavelength, phaseShift, magnitude) {
+  let newData = data.slice(0);
+  for (let i = 0; i < newData.length; i++) {
+    // newData[i] = magnitude * Math.sin(i * wavelength * 2 * Math.PI);
+    // B = 0.5 * sin(2wt + 0.52)
+    const t = i / 500;
+    const w = 2 * Math.PI;
+    newData[i] = magnitude * Math.sin(wavelength * w * t + phaseShift);
   }
   return newData;
 }
