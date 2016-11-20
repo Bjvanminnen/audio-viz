@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import BufferCanvas from './BufferCanvas';
 import { playData } from './utils/webAudio';
@@ -17,16 +16,15 @@ const styles = {
   }
 };
 
+function isFullScreen() {
+  return window.innerHeight === screen.height;
+}
+
 class BufferCanvasController extends Component {
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-    fullScreenMode: PropTypes.bool.isRequired,
-
     //redux
-    streamIds: PropTypes.instanceOf(Immutable.List).isRequired,
-    streams: PropTypes.instanceOf(Immutable.Map).isRequired,
     playStreamId: PropTypes.string,
+    playStream: PropTypes.instanceOf(Float32Array),
     maxStreamLength: PropTypes.number.isRequired
   }
 
@@ -98,9 +96,7 @@ class BufferCanvasController extends Component {
       return;
     }
 
-    const { playStreamId, streams } = this.props;
-
-    const playStream = streams.get(playStreamId);
+    const { playStream } = this.props;
     if (!playStream) {
       return;
     }
@@ -149,8 +145,11 @@ class BufferCanvasController extends Component {
   }
 
   render() {
-    const { width, height, fullScreenMode, playStreamId, maxStreamLength } = this.props;
+    const { playStreamId, maxStreamLength } = this.props;
     const { offset, sourceNode } = this.state;
+
+    const width = isFullScreen() ? screen.width - 8 : 1800;
+    const height = isFullScreen() ? screen.height - 6 : 500;
 
     return (
       <div>
@@ -161,7 +160,7 @@ class BufferCanvasController extends Component {
           step={8}
           logCursorChange={this.logCursorChange}
         />
-        {!fullScreenMode &&
+        {!isFullScreen() &&
           <div>
             <div>
               <span>Offset: </span>
@@ -208,9 +207,8 @@ class BufferCanvasController extends Component {
   }
 };
 
-export default connect(state => ({
-  maxStreamLength: state.dataStreams.maxLength,
-  playStreamId: state.dataStreams.playStreamId,
-  streamIds: state.dataStreams.streamIds,
-  streams: state.dataStreams.streams
+export default connect(({dataStreams}) => ({
+  maxStreamLength: dataStreams.maxLength,
+  playStream: dataStreams.streams.get(dataStreams.playStreamId),
+  playStreamId: dataStreams.playStreamId
 }))(BufferCanvasController);

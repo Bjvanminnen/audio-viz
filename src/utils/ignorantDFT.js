@@ -25,7 +25,7 @@ export default function DSP(buffer, sampleRate=4410) {
 
   // Normalize to max 1
   for (let i = 0; i < powers.length; i++) {
-    powers[i] = powers[i] / maxPower;
+    powers[i] /= maxPower;
   }
   console.log(maxPower);
 

@@ -5,21 +5,8 @@ import React, { Component } from 'react';
 // import SourceBufferControls from './SourceBufferControls';
 import BufferCanvasController from './BufferCanvasController';
 
-const styles = {
-  canvas: {
-    border: '1px solid black',
-    backgroundColor: 'black'
-  }
-};
-
-function isFullScreen() {
-  return window.innerHeight === screen.height;
-}
-
 class App extends Component {
   render() {
-    const width = isFullScreen() ? screen.width - 8 : 1800;
-    const height = isFullScreen() ? screen.height - 6 : 500;
     return (
       <div>
         {
@@ -33,11 +20,7 @@ class App extends Component {
         // <canvas id="c0" width="1600" height="200" style={styles.canvas}/>
         // <canvas id="c1" width="1600" height="200" style={styles.canvas}/>
         }
-        <BufferCanvasController
-          width={width}
-          height={height}
-          fullScreenMode={isFullScreen()}
-        />
+        <BufferCanvasController/>
 
       </div>
     );

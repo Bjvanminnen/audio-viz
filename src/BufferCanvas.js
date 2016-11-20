@@ -86,11 +86,7 @@ class BufferCanvas extends Component {
       context.lineWidth = 2;
 
       context.beginPath();
-      let moveToX = 0;
-      if (leftOffset < 0) {
-        moveToX = -leftOffset;
-      }
-
+      
       for (let x = 0; x < width; x++) {
         const index = leftOffset + x * step;
         if (index >= 0) {

@@ -19,17 +19,18 @@ const notes = {
 const store = getStore();
 
 // TODO - could make this part of a thunk action?
-function addFile(filename) {
+function addFile(filename, id) {
+  id = id || filename;
   const filepath = process.env.PUBLIC_URL + '/sounds/' + filename;
   loadBuffer(filepath).then(buffer => {
     const data = buffer.getChannelData(0);
-    store.dispatch(addStream(filename, data));
+    store.dispatch(addStream(id, data));
   });
 }
 
 export default function initializeStore() {
   const filename = 'heartbeats.mp3';
-  addFile(filename);
+  addFile(filename, 'song');
   // store.dispatch(setPlayStream(filename));
   // store.dispatch(setInfoStream(filename));
 
