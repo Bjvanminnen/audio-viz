@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 const CursorInfo = ({offset, val}) => (
   <div>
@@ -8,4 +9,4 @@ const CursorInfo = ({offset, val}) => (
     <span>{val}</span>
   </div>
 );
-export default CursorInfo;
+export default connect(state => state.cursor)(CursorInfo);

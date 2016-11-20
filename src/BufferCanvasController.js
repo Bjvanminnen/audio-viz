@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import BufferCanvas from './BufferCanvas';
 import { playData } from './utils/webAudio';
 import CursorInfo from './CursorInfo';
+import { updateCursor } from './redux/cursor';
 
 const styles = {
   canvas: {
@@ -34,11 +35,7 @@ class BufferCanvasController extends Component {
 
     this.state = {
       offset: 0,
-      sourceNode: null,
-      cursor: {
-        offset: 0,
-        val: 0
-      }
+      sourceNode: null
     };
 
     this.moveOffset = this.moveOffset.bind(this);
@@ -48,7 +45,6 @@ class BufferCanvasController extends Component {
     this.play = this.play.bind(this);
     this.stop = this.stop.bind(this);
     this.reset = this.reset.bind(this);
-    this.logCursorChange = this.logCursorChange.bind(this);
   }
 
   componentDidMount() {
@@ -139,14 +135,8 @@ class BufferCanvasController extends Component {
     });
   }
 
-  logCursorChange(offset, val) {
-    this.setState({
-      cursor: { offset, val }
-    });
-  }
-
   render() {
-    const { playStreamId, maxStreamLength } = this.props;
+    const { playStreamId, maxStreamLength, updateCursor } = this.props;
     const { offset, sourceNode } = this.state;
 
     const width = isFullScreen() ? screen.width - 8 : 1800;
@@ -158,8 +148,8 @@ class BufferCanvasController extends Component {
           height={height}
           width={width}
           offset={offset}
-          step={8}
-          logCursorChange={this.logCursorChange}
+          step={1}
+          logCursorChange={updateCursor}
         />
         {!isFullScreen() &&
           <div>
@@ -195,10 +185,7 @@ class BufferCanvasController extends Component {
               Stop
             </button>
             <div ref="fps" style={{display: 'none'}}>0</div>
-            <CursorInfo
-              val={this.state.cursor.val}
-              offset={this.state.cursor.offset}
-            />
+            <CursorInfo/>
           </div>
         }
       </div>
@@ -210,4 +197,8 @@ export default connect(({dataStreams}) => ({
   maxStreamLength: dataStreams.maxLength,
   playStream: dataStreams.streams.get(dataStreams.playStreamId),
   playStreamId: dataStreams.playStreamId
+}), dispatch => ({
+  updateCursor(offset, val) {
+    dispatch(updateCursor(offset, val));
+  }
 }))(BufferCanvasController);

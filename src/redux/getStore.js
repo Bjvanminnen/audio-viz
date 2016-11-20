@@ -2,6 +2,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createLogger from 'redux-logger';
 import Immutable from 'immutable';
 import dataStreams from './dataStreams';
+import cursor from './cursor';
 
 const reduxLogger = createLogger({
   collapsed: true,
@@ -19,11 +20,12 @@ const reduxLogger = createLogger({
     }
 
     return newState;
-  }
+  },
+  predicate: (getState, action) => !(/^cursor\//.test(action.type))
 });
 
 let store = null;
-const reducers = combineReducers({dataStreams});
+const reducers = combineReducers({dataStreams, cursor});
 
 export default function getStore() {
   if (!store) {

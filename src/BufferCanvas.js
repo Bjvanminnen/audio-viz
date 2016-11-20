@@ -86,7 +86,7 @@ class BufferCanvas extends Component {
       context.lineWidth = 2;
 
       context.beginPath();
-      
+
       for (let x = 0; x < width; x++) {
         const index = leftOffset + x * step;
         if (index >= 0) {
@@ -143,6 +143,7 @@ class BufferCanvas extends Component {
     context.fill();
     context.stroke();
 
+    // TODO: note this doesn't account for steps
     if (logCursorChange) {
       logCursorChange(index, buffer[index]);
     }
