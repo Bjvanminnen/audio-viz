@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import BufferCanvas from './BufferCanvas';
 import { playData } from './utils/webAudio';
+import CursorInfo from './CursorInfo';
 
 const styles = {
   canvas: {
@@ -194,12 +195,10 @@ class BufferCanvasController extends Component {
               Stop
             </button>
             <div ref="fps" style={{display: 'none'}}>0</div>
-            <div>
-              {/* TODO - could make this display all streams */ }
-              <span>{this.state.cursor.offset.toLocaleString()}</span>
-              <span> </span>
-              <span>{this.state.cursor.val}</span>
-            </div>
+            <CursorInfo
+              val={this.state.cursor.val}
+              offset={this.state.cursor.offset}
+            />
           </div>
         }
       </div>
