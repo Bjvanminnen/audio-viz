@@ -21,7 +21,7 @@ const reduxLogger = createLogger({
 
     return newState;
   },
-  predicate: (getState, action) => !(/^cursor\//.test(action.type))
+  predicate: (getState, action) => action.logLevel !== 'verbose'
 });
 
 let store = null;

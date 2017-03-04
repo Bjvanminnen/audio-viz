@@ -16,4 +16,4 @@ export default function reducer(state = initialState, action) {
 }
 
 export const updateCursor = (offset, val) => (
-  { type: UPDATE_CURSOR, offset, val });
+  { type: UPDATE_CURSOR, offset, val, logLevel: 'verbose' });
