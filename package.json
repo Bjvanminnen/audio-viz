@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "react": "^15.3.2",
-    "react-dom": "^15.3.2"
+    "react-dom": "^15.3.2",
+    "web-audio-utils": "git://github.com/Bjvanminnen/web-audio-utils.git"
   },
   "scripts": {
     "start": "react-scripts start",

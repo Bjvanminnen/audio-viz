@@ -1,7 +1,7 @@
 /*eslint-disable no-unused-vars */
 
 import getStore from './redux/getStore';
-import { loadBuffer } from './utils/webAudio';
+import { loadBuffer } from 'web-audio-utils';
 import { addStream, setPlayStream, setInfoStream } from './redux/dataStreams';
 import dsp from './utils/dsp';
 import ignorantDFT from './utils/ignorantDFT';

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import BufferCanvas from './BufferCanvas';
-import { playData } from './utils/webAudio';
+import { playData } from 'web-audio-utils';
 import CursorInfo from './CursorInfo';
 import { updateCursor } from './redux/cursor';
 import Flasher from './Flasher';

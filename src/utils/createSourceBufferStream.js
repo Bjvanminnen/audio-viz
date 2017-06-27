@@ -1,4 +1,4 @@
-import { loadBuffer } from './webAudio';
+import { loadBuffer } from 'web-audio-utils';
 import {
   SourceBuffer,
   Gain,

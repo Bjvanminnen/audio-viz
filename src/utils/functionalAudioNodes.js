@@ -1,4 +1,4 @@
-import { getContext } from './webAudio';
+import { getContext } from 'web-audio-utils';
 
 function resolveInputs(options, ...targets) {
   options = options || {};
