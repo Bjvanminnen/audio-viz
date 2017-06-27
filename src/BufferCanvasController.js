@@ -4,6 +4,7 @@ import BufferCanvas from './BufferCanvas';
 import { playData } from './utils/webAudio';
 import CursorInfo from './CursorInfo';
 import { updateCursor } from './redux/cursor';
+import Flasher from './Flasher';
 
 const styles = {
   canvas: {
@@ -186,6 +187,7 @@ class BufferCanvasController extends Component {
             </button>
             <div ref="fps" style={{display: 'none'}}>0</div>
             <CursorInfo/>
+            <Flasher streamId="averagedDelta" offset={offset}/>
           </div>
         }
       </div>

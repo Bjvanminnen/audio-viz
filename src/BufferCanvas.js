@@ -171,6 +171,6 @@ class BufferCanvas extends Component {
 
 export default connect(state => ({
   infoStreamId: state.dataStreams.infoStreamId,
-  streamIds: state.dataStreams.streamIds,
+  streamIds: state.dataStreams.streamIdsToShow,
   streams: state.dataStreams.streams
 }))(BufferCanvas);

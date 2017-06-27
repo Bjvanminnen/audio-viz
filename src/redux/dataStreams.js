@@ -1,10 +1,11 @@
 import Immutable from 'immutable';
 
 const ADD_STREAM = 'dataStreams/ADD_STREAM';
-export const addStream = (streamId, stream) => ({
+export const addStream = (streamId, stream, showStream=true) => ({
   type: ADD_STREAM,
   streamId,
-  stream
+  stream,
+  showStream
 });
 
 const SET_PLAY_STREAM = 'dataStreams/SET_PLAY_STREAM';
@@ -23,7 +24,7 @@ export const setInfoStream = (streamId) => ({
 const DataStreamRecord = Immutable.Record({
   playStreamId: null,
   infoStreamId: null,
-  streamIds: Immutable.List(),
+  streamIdsToShow: Immutable.List(),
   streams: Immutable.Map(),
   maxLength: 0
 });
@@ -45,10 +46,14 @@ export default function dataStreams(state = initialState, action) {
     const newMaxLength = Math.max(state.maxLength, stream.length);
 
     let nextState = state.merge({
-      streamIds: state.streamIds.push(streamId),
       streams: state.streams.set(streamId, stream),
       maxLength: newMaxLength
     });
+    if (action.showStream) {
+      nextState = nextState.merge({
+        streamIdsToShow: state.streamIdsToShow.push(streamId)
+      });
+    }
     if (nextState.streams.size === 1) {
       nextState = nextState.merge({
         playStreamId: streamId,

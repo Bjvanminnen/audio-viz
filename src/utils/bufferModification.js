@@ -301,3 +301,36 @@ export function trisin(data) {
   }
   return newData;
 }
+
+export function averagedDelta(data) {
+  let newData = data.slice(0);
+
+  const WINDOW = 1000;
+
+  const delta = (index) => index <= 0 ? 0 :
+    Math.abs(data[index] - data[index - 1]);
+
+  let max = 0;
+  let runningTotal = 0;
+
+  for (let i = 1; i < newData.length; i++) {
+    runningTotal += delta(i)
+    runningTotal -= delta(i - WINDOW);
+    newData[i] = runningTotal;
+    max = Math.max(max, newData[i]);
+  }
+
+  for (let i = 1; i < newData.length; i++) {
+    newData[i] = newData[i] / (max * 2) - 1;
+  }
+
+  for (let i = 1; i < newData.length; i++) {
+    newData[i] = newData[i + WINDOW / 2];
+  }
+
+  for (let i = 1; i < newData.length; i++) {
+    newData[i] = newData[i] < -0.7 ? 0 : 1;
+  }
+
+  return newData;
+}
